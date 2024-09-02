@@ -1,13 +1,15 @@
 import { expr } from "../../src/warmup/expr";
 
 describe('Test', () => {
-    test('0', () => {
-        expect(expr('0')).toEqual(0)
-    })   
-    test('2+3', () => {
-        expect(expr('2+3')).toEqual(5)
-    })
-    test('2-3', () => {
-        expect(expr('2-3')).toEqual(-1)
-    })
+    let expressions: Map<string, number> = new Map([
+        ['0', 0],
+        ['2+3', 5],
+        ['2-3', -1]
+    ]);
+
+    for(let [expression,result] of expressions) {
+        test(expression, () => {
+            expect(expr(expression)).toEqual(result)
+        })
+    }
 })
