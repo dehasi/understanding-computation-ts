@@ -7,9 +7,17 @@
 //        | factor % factor
 // factor | number
 //        | (expr)
-export const expr = (expression :string): number => {
+export const solve  = (expression :string): number => {
     let i = 0
+    
     const factor = ():number => {
+        if(expression[i] == '(') {
+            i++
+            const f = expr()
+            if(expression[i] == ')') i++
+            else throw new Error(`no right paren at ${i}`);
+            return f
+        }
         const start = i;
         while('0' <= expression[i] && expression[i] <= '9' ) 
             i++
@@ -42,15 +50,19 @@ export const expr = (expression :string): number => {
         return expression[i]
     }
     
-    let t = term();
-    for(let o = op(); '-+'.includes(o); o = op()) {
-        i++
-        if(o == '+') 
-            t += term();
-        else if(o == '-')
-            t -= term();
-        else 
-            break
+    const expr = (): number => {
+        let t = term();
+        for(let o = op(); '-+'.includes(o); o = op()) {
+            i++
+            if(o == '+') 
+                t += term();
+            else if(o == '-')
+                t -= term();
+            else 
+                break
+        }
+        return t
     }
-    return t
+    return expr()
+
 }
