@@ -10,20 +10,20 @@
 export const solve  = (expression :string): number => {
     let i = 0
     
-    const factor = ():number => {
-        if(expression[i] == '(') {
+    const expr = (): number => {
+        let t = term();
+        for(let o = op(); '-+'.includes(o); o = op()) {
             i++
-            const f = expr()
-            if(expression[i] == ')') i++
-            else throw new Error(`no right paren at ${i}`);
-            return f
+            if(o == '+') 
+                t += term();
+            else if(o == '-')
+                t -= term();
+            else 
+                break
         }
-        const start = i;
-        while('0' <= expression[i] && expression[i] <= '9' ) 
-            i++
-
-        return +expression.substring(start, i)
+        return t
     }
+
     const term = (): number => {
         let f = factor();
         for(let o = op();'*/%'.includes(o); o = op()) {
@@ -44,25 +44,27 @@ export const solve  = (expression :string): number => {
         }
         return f
     }
+        
+    const factor = ():number => {
+        if(expression[i] == '(') {
+            i++
+            const f = expr()
+            if(expression[i] == ')') i++
+            else throw new Error(`no right paren at ${i}`);
+            return f
+        }
+        const start = i;
+        while('0' <= expression[i] && expression[i] <= '9' ) 
+            i++
+
+        return +expression.substring(start, i)
+    }
+
     const op = (): string =>{
         while(expression[i] == ' ' || expression[i] == '\t')
             i++
         return expression[i]
     }
-    
-    const expr = (): number => {
-        let t = term();
-        for(let o = op(); '-+'.includes(o); o = op()) {
-            i++
-            if(o == '+') 
-                t += term();
-            else if(o == '-')
-                t -= term();
-            else 
-                break
-        }
-        return t
-    }
-    return expr()
 
+    return expr()
 }
