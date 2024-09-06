@@ -7,7 +7,7 @@
 //        | factor % factor
 // factor | number
 //        | (expr)
-export const solve  = (expression :string): number => {
+export const solve = (expression :string): number => {
     let i = 0
     
     const expr = (): number => {
