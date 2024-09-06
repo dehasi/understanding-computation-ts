@@ -1,0 +1,8 @@
+= Chapter 2
+
+As TS is not Ruby I'll need to do some workarounds.
+
+I have a base class `Expression` instead of Ruby's `Struct`.
+
+`Machite#run` returns a list of expressions instead of printing them.
+That's easier to test.
