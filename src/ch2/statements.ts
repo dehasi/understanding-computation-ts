@@ -121,12 +121,13 @@ class Sequence extends Statement {
   }
 }
 
-class While extends Statement {
+// This is my solution. the Books solution is below
+class MyWhile extends Statement {
   private readonly condition: Expression;
   private readonly body: Statement;
-  private readonly prev?: While;
+  private readonly prev?: MyWhile;
 
-  constructor(condition: Expression, body: Statement, prev: While | undefined = undefined) {
+  constructor(condition: Expression, body: Statement, prev: MyWhile | undefined = undefined) {
     super();
     this.condition = condition;
     this.body = body
@@ -135,16 +136,16 @@ class While extends Statement {
 
   reduce(env: Environment): [Statement, Environment] {
     if (this.condition.reducible()) {
-      return [new While(this.condition.reduce(env), this.body, this), env]
+      return [new MyWhile(this.condition.reduce(env), this.body, this), env]
     }
 
     if (TRUE.equals(this.condition)) {
       if (this.body.reducible()) {
         const [reduced_body, reduced_env] = this.body.reduce(env);
-        return [new While(this.condition, reduced_body, this), reduced_env]
+        return [new MyWhile(this.condition, reduced_body, this), reduced_env]
       }
       // while is finished
-      let p :While|undefined= this;
+      let p :MyWhile|undefined= this;
       while(p.prev) p = p.prev;
       return [p, env];
 
@@ -163,4 +164,4 @@ class While extends Statement {
   }
 }
 
-export { Statement, Assign, DoNothing, If, Sequence, While };
+export { Statement, Assign, DoNothing, If, Sequence, MyWhile as While };
