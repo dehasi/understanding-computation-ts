@@ -120,4 +120,26 @@ class Sequence extends Statement {
     return `${this.first}; ${this.second}`;
   }
 }
-export { Statement, Assign, DoNothing, If, Sequence };
+
+class While extends Statement {
+  private readonly condition: Expression;
+  private readonly body: Statement;
+
+  constructor(condition: Expression, body: Statement) {
+    super();
+    this.condition = condition;
+    this.body = body
+  }
+
+  reduce(env: Environment): [Statement, Environment] {
+      throw new Error("Unimplemented");
+  }
+  reducible(): boolean {
+    return true;
+  }
+  toString(): string {
+    return `while (${this.condition}) {${this.body}}`;
+  }
+
+}
+export { Statement, Assign, DoNothing, If, Sequence, While };
