@@ -1,15 +1,16 @@
 import {
   Add,
+  Assign,
   LessThan,
   Multiply,
   Nmbr,
   Variable,
 } from "../../src/ch2/expressions";
-import { Machine } from "../../src/ch2/machine";
+import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
 
-describe("Machine reduction", () => {
+describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
-    const machine = new Machine(
+    const machine = new ExpressionMachine(
       new Add(
         new Multiply(new Nmbr(1), new Nmbr(2)),
         new Multiply(new Nmbr(3), new Nmbr(4)),
@@ -28,7 +29,7 @@ describe("Machine reduction", () => {
   });
 
   test("Boolean", () => {
-    const machine = new Machine(
+    const machine = new ExpressionMachine(
       new LessThan(new Nmbr(5), new Add(new Nmbr(2), new Nmbr(2))),
       new Map(),
     );
@@ -39,7 +40,7 @@ describe("Machine reduction", () => {
   });
 
   test("Variable", () => {
-    const machine = new Machine(
+    const machine = new ExpressionMachine(
       new Add(new Variable("x"), new Variable("y")),
       new Map([
         ["x", new Nmbr(3)],
@@ -54,6 +55,24 @@ describe("Machine reduction", () => {
       "3 + y, {x=>3, y=>4}",
       "3 + 4, {x=>3, y=>4}",
       "7, {x=>3, y=>4}",
+    ]);
+  });
+});
+
+describe("Statement Machine", () => {
+  test("Assign", () => {
+    const machine = new StatementMachine(
+      new Assign("x", new Add(new Variable("x"), new Nmbr(1))),
+      new Map([["x", new Nmbr(2)]]),
+    );
+
+    const reductions = machine.run();
+
+    expect(reductions).toEqual([
+      "x = x + 1, {x=>2}",
+      "x = 2 + 1, {x=>2}",
+      "x = 3, {x=>2}",
+      "do-nothing, {x=>3}",
     ]);
   });
 });
