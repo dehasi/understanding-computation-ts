@@ -7,7 +7,7 @@ import {
   Variable,
 } from "../../src/ch2/expressions";
 import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
-import { Assign, DO_NOTHING, If, Sequence, While } from "../../src/ch2/statements";
+import { Assign, DO_NOTHING, If, Sequence, While, MyWhile } from "../../src/ch2/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -134,10 +134,10 @@ describe("Statement Machine", () => {
     ]);
   });
 
-  test("Sequence", () => {
+  test("MyWhile", () => {
     const machine = new StatementMachine(
 
-      new While(new LessThan(new Variable("x"), new Nmbr(2)),
+      new MyWhile(new LessThan(new Variable("x"), new Nmbr(2)),
         new Assign("x", new Add(new Variable("x"), new Nmbr(1)))),
 
       new Map([["x", new Nmbr(0)]]),
@@ -162,6 +162,42 @@ describe("Statement Machine", () => {
       "while(false) {x = x + 1}, {x=>2}",
       "do-nothing, {x=>2}",
     ]);
+  });
 
+  test("While", () => {
+    const machine = new StatementMachine(
+
+      new While(new LessThan(new Variable("x"), new Nmbr(2)),
+        new Assign("x", new Add(new Variable("x"), new Nmbr(1)))),
+
+      new Map([["x", new Nmbr(0)]]),
+    );
+
+    const reductions = machine.run();
+    expect(reductions).toEqual([
+      "while (x < 2) { x = x + 1 }, {x=>0}",
+      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
+      "if (0 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
+      "if (true) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
+      "x = x + 1; while (x < 2) { x = x + 1 }, {x=>0}",
+      "x = 0 + 1; while (x < 2) { x = x + 1 }, {x=>0}",
+      "x = 1; while (x < 2) { x = x + 1 }, {x=>0}",
+      "do-nothing; while (x < 2) { x = x + 1 }, {x=>1}",
+
+      "while (x < 2) { x = x + 1 }, {x=>1}",
+      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
+      "if (1 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
+      "if (true) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
+      "x = x + 1; while (x < 2) { x = x + 1 }, {x=>1}",
+      "x = 1 + 1; while (x < 2) { x = x + 1 }, {x=>1}",
+      "x = 2; while (x < 2) { x = x + 1 }, {x=>1}",
+      "do-nothing; while (x < 2) { x = x + 1 }, {x=>2}",
+
+      "while (x < 2) { x = x + 1 }, {x=>2}",
+      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
+      "if (2 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
+      "if (false) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
+      "do-nothing, {x=>2}",
+    ]);
   });
 });

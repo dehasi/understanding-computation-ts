@@ -99,11 +99,11 @@ class Sequence extends Statement {
   private readonly first: Statement;
   private readonly second: Statement;
 
-  constructor(consequence: Statement, alternative: Statement) {
+  constructor(first: Statement, second: Statement) {
     super();
 
-    this.first = consequence;
-    this.second = alternative;
+    this.first = first;
+    this.second = second;
   }
 
   reduce(env: Environment): [Statement, Environment] {
@@ -145,8 +145,8 @@ class MyWhile extends Statement {
         return [new MyWhile(this.condition, reduced_body, this), reduced_env]
       }
       // while is finished
-      let p :MyWhile|undefined= this;
-      while(p.prev) p = p.prev;
+      let p: MyWhile | undefined = this;
+      while (p.prev) p = p.prev;
       return [p, env];
 
 
@@ -164,4 +164,27 @@ class MyWhile extends Statement {
   }
 }
 
-export { Statement, Assign, DoNothing, If, Sequence, MyWhile as While };
+
+class While extends Statement {
+  private readonly condition: Expression;
+  private readonly body: Statement;
+
+
+  constructor(condition: Expression, body: Statement) {
+    super();
+    this.condition = condition;
+    this.body = body
+
+  }
+
+  reduce(env: Environment): [Statement, Environment] {
+    return [new If(this.condition, new Sequence(this.body, this), DO_NOTHING), env]
+  }
+  reducible(): boolean {
+    return true;
+  }
+  toString(): string {
+    return `while (${this.condition}) { ${this.body} }`;
+  }
+}
+export { Statement, Assign, DoNothing, If, Sequence, MyWhile, While };
