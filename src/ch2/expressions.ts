@@ -155,4 +155,44 @@ class Variable extends Expression {
   }
 }
 
-export { Expression, Nmbr, Add, Multiply, Boolean, LessThan, Variable };
+// Statements
+class DoNothing extends Expression {
+  equals(other: any): boolean {
+    return other instanceof DoNothing;
+  }
+  reducible(): boolean {
+    return false;
+  }
+  toString(): string {
+    return "do-nothing";
+  }
+}
+
+class Assign extends Expression {
+  private readonly name: string;
+  private readonly expression: Expression;
+
+  constructor(name: string, expression: Expression) {
+    super();
+    this.name = name;
+    this.expression = expression;
+  }
+
+  reduce(env: Map<String, Expression>): Expression {
+    if (this.expression.reducible()) {
+      return new Assign(this.name, this.expression.reduce(env));
+    } else {
+      const newEnv = new Map(env);
+      newEnv.set(this.name, this.expression);
+      return new DoNothing();
+    }
+  }
+  reducible(): boolean {
+    return true;
+  }
+  toString(): string {
+    return `${this.name} = ${this.expression}`;
+  }
+}
+
+export { Expression, Nmbr, Add, Multiply, Boolean, LessThan, Variable, Assign };

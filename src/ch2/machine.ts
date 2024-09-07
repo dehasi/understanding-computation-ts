@@ -13,14 +13,20 @@ export class Machine {
     return (this.expression = this.expression.reduce(this.environment));
   }
 
-  run(): Array<Expression> {
-    const result = new Array<Expression>();
+  run(): Array<string> {
+    const result = new Array<string>();
 
     while (this.expression.reducible()) {
-      result.push(this.expression);
+      result.push(`${this.expression}, ${this.str(this.environment)}`);
       this.step();
     }
-    result.push(this.expression);
+    result.push(`${this.expression}, ${this.str(this.environment)}`);
     return result;
+  }
+  private str(map: Map<String, Expression>): string {
+    const res = Array.from(map)
+      .map(([key, value]) => `${key}=>${value}`)
+      .join(", ");
+    return `{${res}}`;
   }
 }

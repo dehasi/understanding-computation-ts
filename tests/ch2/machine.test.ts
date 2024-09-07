@@ -5,7 +5,7 @@ import {
   Nmbr,
   Variable,
 } from "../../src/ch2/expressions";
-import { Machine } from "../../src/ch2/Machine";
+import { Machine } from "../../src/ch2/machine";
 
 describe("Machine reduction", () => {
   test("Nmbr", () => {
@@ -17,9 +17,14 @@ describe("Machine reduction", () => {
       new Map(),
     );
 
-    const reductions = machine.run().map((x) => x.toString());
+    const reductions = machine.run();
 
-    expect(reductions).toEqual(["1 * 2 + 3 * 4", "2 + 3 * 4", "2 + 12", "14"]);
+    expect(reductions).toEqual([
+      "1 * 2 + 3 * 4, {}",
+      "2 + 3 * 4, {}",
+      "2 + 12, {}",
+      "14, {}",
+    ]);
   });
 
   test("Boolean", () => {
@@ -30,7 +35,7 @@ describe("Machine reduction", () => {
 
     const reductions = machine.run().map((x) => x.toString());
 
-    expect(reductions).toEqual(["5 < 2 + 2", "5 < 4", "false"]);
+    expect(reductions).toEqual(["5 < 2 + 2, {}", "5 < 4, {}", "false, {}"]);
   });
 
   test("Variable", () => {
@@ -44,6 +49,11 @@ describe("Machine reduction", () => {
 
     const reductions = machine.run().map((x) => x.toString());
 
-    expect(reductions).toEqual(["x + y", "3 + y", "3 + 4", "7"]);
+    expect(reductions).toEqual([
+      "x + y, {x=>3, y=>4}",
+      "3 + y, {x=>3, y=>4}",
+      "3 + 4, {x=>3, y=>4}",
+      "7, {x=>3, y=>4}",
+    ]);
   });
 });
