@@ -26,6 +26,9 @@ class Nmbr extends Expression {
     return false;
   }
 
+  equals(that: any): boolean {
+    return that instanceof Nmbr && this.value == that.value;
+  }
   toString(): string {
     return `${this.value}`;
   }
@@ -43,10 +46,16 @@ class Boolean extends Expression {
     return false;
   }
 
+  equals(that: any): boolean {
+    return that instanceof Boolean && this.value == that.value;
+  }
+
   toString(): string {
     return `${this.value}`;
   }
 }
+export const TRUE = new Boolean(true);
+export const FALSE = new Boolean(false);
 
 class LessThan extends Expression {
   private readonly left: Expression;

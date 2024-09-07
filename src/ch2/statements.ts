@@ -1,5 +1,5 @@
 import { Environment } from "./commons";
-import { Expression } from "./expressions";
+import { Expression, FALSE, TRUE } from "./expressions";
 
 class Statement {
   // readonly reduceable: () => boolean;
@@ -59,4 +59,39 @@ class Assign extends Statement {
   }
 }
 
-export { Statement, Assign, DoNothing };
+class If extends Statement {
+  
+  private readonly condition: Expression;
+  private readonly consequence :  Statement;
+  private readonly alternative :  Statement;
+
+  constructor(condition: Expression, consequence:Statement, alternative :Statement){
+    super();
+    this.condition = condition;
+    this.consequence = consequence;
+    this.alternative = alternative;
+  }
+
+  reduce(env: Environment): [Statement, Environment] {
+      if(this.condition.reducible()) {
+        return [new If(this.condition.reduce(env), this.consequence, this.alternative),env]
+      }else {
+
+        if(TRUE.equals(this.condition)) {
+          return [this.consequence, env]
+        } else if (FALSE.equals(this.condition)) {
+          return [this.alternative, env]
+        } else {
+          throw new Error("Expected Boolean, got " + typeof this.condition)
+        }
+      }
+  }
+  reducible(): boolean {
+    return true;
+  }
+  toString(): string {
+    return `if (${this.condition}) {${this.consequence}} else {${this.alternative}}`;
+  }
+
+}
+export { Statement, Assign, DoNothing , If};
