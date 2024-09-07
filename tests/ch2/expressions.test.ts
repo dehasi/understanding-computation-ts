@@ -4,6 +4,7 @@ import {
   Machine,
   Multiply,
   Nmbr,
+  Variable,
 } from "../../src/ch2/expressions";
 
 describe("Reduction toString", () => {
@@ -41,5 +42,19 @@ describe("Machine reduction", () => {
     const reductions = machine.run().map((x) => x.toString());
 
     expect(reductions).toEqual(["5 < 2 + 2", "5 < 4", "false"]);
+  });
+
+  test("Variable", () => {
+    const machine = new Machine(
+      new Add(new Variable("x"), new Variable("y")),
+      new Map([
+        ["x", new Nmbr(3)],
+        ["y", new Nmbr(4)],
+      ]),
+    );
+
+    const reductions = machine.run().map((x) => x.toString());
+
+    expect(reductions).toEqual(["x + y", "3 + y", "3 + 4", "7"]);
   });
 });

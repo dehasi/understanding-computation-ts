@@ -174,4 +174,13 @@ class Machine {
     return result;
   }
 }
-export { Expression, Nmbr, Add, Multiply, Machine, Boolean, LessThan };
+export {
+  Expression,
+  Nmbr,
+  Add,
+  Multiply,
+  Machine,
+  Boolean,
+  LessThan,
+  Variable,
+};
