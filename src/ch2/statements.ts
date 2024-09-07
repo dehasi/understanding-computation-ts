@@ -124,22 +124,43 @@ class Sequence extends Statement {
 class While extends Statement {
   private readonly condition: Expression;
   private readonly body: Statement;
+  private readonly prev?: While;
 
-  constructor(condition: Expression, body: Statement) {
+  constructor(condition: Expression, body: Statement, prev: While | undefined = undefined) {
     super();
     this.condition = condition;
     this.body = body
+    this.prev = prev
   }
 
   reduce(env: Environment): [Statement, Environment] {
-      throw new Error("Unimplemented");
+    if (this.condition.reducible()) {
+      return [new While(this.condition.reduce(env), this.body, this), env]
+    }
+
+    if (TRUE.equals(this.condition)) {
+      if (this.body.reducible()) {
+        const [reduced_body, reduced_env] = this.body.reduce(env);
+        return [new While(this.condition, reduced_body, this), reduced_env]
+      }
+      // while is finished
+      let p :While|undefined= this;
+      while(p.prev) p = p.prev;
+      return [p, env];
+
+
+    } else if (FALSE.equals(this.condition)) {
+      return [DO_NOTHING, env]
+    } else {
+      throw new Error("Expected Boolean, got " + typeof this.condition)
+    }
   }
   reducible(): boolean {
     return true;
   }
   toString(): string {
-    return `while (${this.condition}) {${this.body}}`;
+    return `while(${this.condition}) {${this.body}}`;
   }
-
 }
+
 export { Statement, Assign, DoNothing, If, Sequence, While };

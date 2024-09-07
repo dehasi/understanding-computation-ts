@@ -7,7 +7,7 @@ import {
   Variable,
 } from "../../src/ch2/expressions";
 import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
-import { Assign, DO_NOTHING, If, Sequence } from "../../src/ch2/statements";
+import { Assign, DO_NOTHING, If, Sequence, While } from "../../src/ch2/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -132,5 +132,36 @@ describe("Statement Machine", () => {
       "y = 5, {x=>2}",
       "do-nothing, {x=>2, y=>5}"
     ]);
+  });
+
+  test("Sequence", () => {
+    const machine = new StatementMachine(
+
+      new While(new LessThan(new Variable("x"), new Nmbr(2)),
+        new Assign("x", new Add(new Variable("x"), new Nmbr(1)))),
+
+      new Map([["x", new Nmbr(0)]]),
+    );
+
+    const reductions = machine.run();
+    expect(reductions).toEqual([
+      "while(x < 2) {x = x + 1}, {x=>0}",
+      "while(0 < 2) {x = x + 1}, {x=>0}",
+      "while(true) {x = x + 1}, {x=>0}",
+      "while(true) {x = 0 + 1}, {x=>0}",
+      "while(true) {x = 1}, {x=>0}",
+      "while(true) {do-nothing}, {x=>1}",
+      "while(x < 2) {x = x + 1}, {x=>1}",
+      "while(1 < 2) {x = x + 1}, {x=>1}",
+      "while(true) {x = x + 1}, {x=>1}",
+      "while(true) {x = 1 + 1}, {x=>1}",
+      "while(true) {x = 2}, {x=>1}",
+      "while(true) {do-nothing}, {x=>2}",
+      "while(x < 2) {x = x + 1}, {x=>2}",
+      "while(2 < 2) {x = x + 1}, {x=>2}",
+      "while(false) {x = x + 1}, {x=>2}",
+      "do-nothing, {x=>2}",
+    ]);
+
   });
 });

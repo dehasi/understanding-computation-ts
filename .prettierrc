@@ -1,7 +1,0 @@
-{
-  "printWidth": 120,              // Set line length before wrapping
-  "proseWrap": "preserve",       // Preserve line breaks in markdown and prose
-  "htmlWhitespaceSensitivity": "strict", // Keep HTML whitespace sensitivity strict
-  "endOfLine": "lf",             // Enforce line feed (\n) for new lines
-  "trailingComma": "es5"         // Add trailing commas where valid in ES5 (objects, arrays, etc.)
-}
