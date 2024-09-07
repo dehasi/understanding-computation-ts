@@ -24,6 +24,7 @@ describe("Machine reduction", () => {
         new Multiply(new Nmbr(1), new Nmbr(2)),
         new Multiply(new Nmbr(3), new Nmbr(4)),
       ),
+      new Map(),
     );
 
     const reductions = machine.run().map((x) => x.toString());
@@ -34,6 +35,7 @@ describe("Machine reduction", () => {
   test("Boolean", () => {
     const machine = new Machine(
       new LessThan(new Nmbr(5), new Add(new Nmbr(2), new Nmbr(2))),
+      new Map(),
     );
 
     const reductions = machine.run().map((x) => x.toString());

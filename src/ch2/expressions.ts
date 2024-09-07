@@ -5,7 +5,7 @@ class Expression {
     throw new Error("Method must be implemented.");
   }
 
-  reduce(): Expression {
+  reduce(env: Map<String, Expression>): Expression {
     throw new Error("Method must be implemented.");
   }
 }
@@ -54,11 +54,11 @@ class LessThan extends Expression {
     this.right = right;
   }
 
-  reduce(): Expression {
+  reduce(env: Map<String, Expression>): Expression {
     if (this.left.reducible()) {
-      return new LessThan(this.left.reduce(), this.right);
+      return new LessThan(this.left.reduce(env), this.right);
     } else if (this.right.reducible()) {
-      return new LessThan(this.left, this.right.reduce());
+      return new LessThan(this.left, this.right.reduce(env));
     } else {
       return new Boolean(
         (this.left as Nmbr).value < (this.right as Nmbr).value,
@@ -84,11 +84,11 @@ class Add extends Expression {
     this.right = right;
   }
 
-  reduce(): Expression {
+  reduce(env: Map<String, Expression>): Expression {
     if (this.left.reducible()) {
-      return new Add(this.left.reduce(), this.right);
+      return new Add(this.left.reduce(env), this.right);
     } else if (this.right.reducible()) {
-      return new Add(this.left, this.right.reduce());
+      return new Add(this.left, this.right.reduce(env));
     } else {
       return new Nmbr((this.left as Nmbr).value + (this.right as Nmbr).value);
     }
@@ -112,11 +112,11 @@ class Multiply extends Expression {
     this.right = right;
   }
 
-  reduce(): Expression {
+  reduce(env: Map<String, Expression>): Expression {
     if (this.left.reducible()) {
-      return new Multiply(this.left.reduce(), this.right);
+      return new Multiply(this.left.reduce(env), this.right);
     } else if (this.right.reducible()) {
-      return new Multiply(this.left, this.right.reduce());
+      return new Multiply(this.left, this.right.reduce(env));
     } else {
       return new Nmbr((this.left as Nmbr).value * (this.right as Nmbr).value);
     }
@@ -129,14 +129,38 @@ class Multiply extends Expression {
   }
 }
 
+class Variable extends Expression {
+  readonly name: string;
+
+  constructor(name: string) {
+    super();
+    this.name = name;
+  }
+
+  reducible(): boolean {
+    return true;
+  }
+
+  reduce(env: Map<String, Expression>): Expression {
+    if (env.has(this.name)) return env.get(this.name) as Expression;
+    else throw new Error(`No name ${this.name} in env: ${env}`);
+  }
+
+  toString(): string {
+    return `${this.name}`;
+  }
+}
 class Machine {
   private expression: Expression;
-  constructor(expression: Expression) {
+  private environment: Map<String, Expression>;
+
+  constructor(expression: Expression, environment: Map<String, Expression>) {
     this.expression = expression;
+    this.environment = environment;
   }
 
   step(): Expression {
-    return (this.expression = this.expression.reduce());
+    return (this.expression = this.expression.reduce(this.environment));
   }
 
   run(): Array<Expression> {
