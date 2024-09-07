@@ -1,12 +1,12 @@
 import {
   Add,
-  Assign,
   LessThan,
   Multiply,
   Nmbr,
   Variable,
 } from "../../src/ch2/expressions";
 import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
+import { Assign } from "../../src/ch2/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {

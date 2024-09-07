@@ -34,16 +34,16 @@ export class ExpressionMachine {
 }
 
 export class StatementMachine {
-  private expression: Statement;
+  private statement: Statement;
   private environment: Environment;
 
-  constructor(expression: Statement, environment: Environment) {
-    this.expression = expression;
+  constructor(statement: Statement, environment: Environment) {
+    this.statement = statement;
     this.environment = environment;
   }
 
   step(): void {
-    [this.expression, this.environment] = this.expression.reduce(
+    [this.statement, this.environment] = this.statement.reduce(
       this.environment,
     );
   }
@@ -51,11 +51,11 @@ export class StatementMachine {
   run(): Array<string> {
     const result = new Array<string>();
 
-    while (this.expression.reducible()) {
-      result.push(`${this.expression}, ${this.str(this.environment)}`);
+    while (this.statement.reducible()) {
+      result.push(`${this.statement}, ${this.str(this.environment)}`);
       this.step();
     }
-    result.push(`${this.expression}, ${this.str(this.environment)}`);
+    result.push(`${this.statement}, ${this.str(this.environment)}`);
     return result;
   }
   private str(map: Map<String, Expression>): string {
