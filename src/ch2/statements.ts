@@ -60,12 +60,12 @@ class Assign extends Statement {
 }
 
 class If extends Statement {
-  
-  private readonly condition: Expression;
-  private readonly consequence :  Statement;
-  private readonly alternative :  Statement;
 
-  constructor(condition: Expression, consequence:Statement, alternative :Statement){
+  private readonly condition: Expression;
+  private readonly consequence: Statement;
+  private readonly alternative: Statement;
+
+  constructor(condition: Expression, consequence: Statement, alternative: Statement) {
     super();
     this.condition = condition;
     this.consequence = consequence;
@@ -73,18 +73,18 @@ class If extends Statement {
   }
 
   reduce(env: Environment): [Statement, Environment] {
-      if(this.condition.reducible()) {
-        return [new If(this.condition.reduce(env), this.consequence, this.alternative),env]
-      }else {
+    if (this.condition.reducible()) {
+      return [new If(this.condition.reduce(env), this.consequence, this.alternative), env]
+    } else {
 
-        if(TRUE.equals(this.condition)) {
-          return [this.consequence, env]
-        } else if (FALSE.equals(this.condition)) {
-          return [this.alternative, env]
-        } else {
-          throw new Error("Expected Boolean, got " + typeof this.condition)
-        }
+      if (TRUE.equals(this.condition)) {
+        return [this.consequence, env]
+      } else if (FALSE.equals(this.condition)) {
+        return [this.alternative, env]
+      } else {
+        throw new Error("Expected Boolean, got " + typeof this.condition)
       }
+    }
   }
   reducible(): boolean {
     return true;
@@ -92,6 +92,32 @@ class If extends Statement {
   toString(): string {
     return `if (${this.condition}) {${this.consequence}} else {${this.alternative}}`;
   }
-
 }
-export { Statement, Assign, DoNothing , If};
+
+class Sequence extends Statement {
+
+  private readonly first: Statement;
+  private readonly second: Statement;
+
+  constructor(consequence: Statement, alternative: Statement) {
+    super();
+
+    this.first = consequence;
+    this.second = alternative;
+  }
+
+  reduce(env: Environment): [Statement, Environment] {
+    if (this.first instanceof DoNothing) {
+      return [this.second, env]
+    }
+    const [reduced, newEnv] = this.first.reduce(env);
+    return [new Sequence(reduced, this.second), newEnv]
+  }
+  reducible(): boolean {
+    return true;
+  }
+  toString(): string {
+    return `${this.first}; ${this.second}`;
+  }
+}
+export { Statement, Assign, DoNothing, If, Sequence };
