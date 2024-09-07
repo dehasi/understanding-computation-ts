@@ -164,7 +164,7 @@ describe("Statement Machine", () => {
     ]);
   });
 
-  test("While", () => {
+  test("While (x<2)", () => {
     const machine = new StatementMachine(
 
       new While(new LessThan(new Variable("x"), new Nmbr(2)),
@@ -198,6 +198,41 @@ describe("Statement Machine", () => {
       "if (2 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
       "if (false) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
       "do-nothing, {x=>2}",
+    ]);
+  });
+
+  test("While (x<5)", () => {
+    const machine = new StatementMachine(
+
+      new While(new LessThan(new Variable("x"), new Nmbr(5)),
+        new Assign("x", new Multiply(new Variable("x"), new Nmbr(3)))),
+
+      new Map([["x", new Nmbr(1)]]),
+    );
+
+    const reductions = machine.run();
+    expect(reductions).toEqual([
+      "while (x < 5) { x = x * 3 }, {x=>1}",
+      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
+      "if (1 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
+      "if (true) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
+      "x = x * 3; while (x < 5) { x = x * 3 }, {x=>1}",
+      "x = 1 * 3; while (x < 5) { x = x * 3 }, {x=>1}",
+      "x = 3; while (x < 5) { x = x * 3 }, {x=>1}",
+      "do-nothing; while (x < 5) { x = x * 3 }, {x=>3}",
+      "while (x < 5) { x = x * 3 }, {x=>3}",
+      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
+      "if (3 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
+      "if (true) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
+      "x = x * 3; while (x < 5) { x = x * 3 }, {x=>3}",
+      "x = 3 * 3; while (x < 5) { x = x * 3 }, {x=>3}",
+      "x = 9; while (x < 5) { x = x * 3 }, {x=>3}",
+      "do-nothing; while (x < 5) { x = x * 3 }, {x=>9}",
+      "while (x < 5) { x = x * 3 }, {x=>9}",
+      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
+      "if (9 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
+      "if (false) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
+      "do-nothing, {x=>9}",
     ]);
   });
 });
