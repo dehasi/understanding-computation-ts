@@ -5,9 +5,9 @@ import {
   Multiply,
   Nmbr,
   Variable,
-} from "../../src/ch2/expressions";
-import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
-import { Assign, DO_NOTHING, If, Sequence, While, MyWhile } from "../../src/ch2/statements";
+} from "../../../src/ch2/small-step/expressions";
+import { ExpressionMachine, StatementMachine } from "../../../src/ch2/small-step/machine";
+import { Assign, DO_NOTHING, If, Sequence, While, MyWhile } from "../../../src/ch2/small-step/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {

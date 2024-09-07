@@ -1,4 +1,4 @@
-import { Add, Multiply, Nmbr } from "../../src/ch2/expressions";
+import { Add, Multiply, Nmbr } from "../../../src/ch2/small-step/expressions";
 
 describe("Reduction toString", () => {
   test("Number", () => {
