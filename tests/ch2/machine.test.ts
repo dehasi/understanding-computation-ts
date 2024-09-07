@@ -1,12 +1,13 @@
 import {
   Add,
+  Boolean,
   LessThan,
   Multiply,
   Nmbr,
   Variable,
 } from "../../src/ch2/expressions";
 import { ExpressionMachine, StatementMachine } from "../../src/ch2/machine";
-import { Assign } from "../../src/ch2/statements";
+import { Assign, DO_NOTHING, If } from "../../src/ch2/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -73,6 +74,42 @@ describe("Statement Machine", () => {
       "x = 2 + 1, {x=>2}",
       "x = 3, {x=>2}",
       "do-nothing, {x=>3}",
+    ]);
+  });
+
+  test("If Else", () => {
+    const machine = new StatementMachine(
+      new If(new Variable("x"),   
+      new Assign("y", new Nmbr(1)),
+      new Assign("y",  new Nmbr(2))),
+      new Map([["x", new Boolean(true)]]),
+    );
+
+    const reductions = machine.run();
+
+    expect(reductions).toEqual([
+      "if (x) {y = 1} else {y = 2}, {x=>true}",
+      "if (true) {y = 1} else {y = 2}, {x=>true}",
+      "y = 1, {x=>true}",
+      "do-nothing, {x=>true, y=>1}"
+    ]);
+  });
+
+
+  test("If only", () => {
+    const machine = new StatementMachine(
+      new If(new Variable("x"),   
+      new Assign("y", new Nmbr(1)),
+      DO_NOTHING),
+      new Map([["x", new Boolean(false)]]),
+    );
+
+    const reductions = machine.run();
+
+    expect(reductions).toEqual([
+      "if (x) {y = 1} else {do-nothing}, {x=>false}",
+      "if (false) {y = 1} else {do-nothing}, {x=>false}",
+      "do-nothing, {x=>false}"
     ]);
   });
 });

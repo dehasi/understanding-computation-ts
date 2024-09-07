@@ -29,7 +29,7 @@ class DoNothing extends Statement {
   }
 }
 
-export const doNothing = new DoNothing();
+export const DO_NOTHING = new DoNothing();
 
 class Assign extends Statement {
   private readonly name: string;
@@ -48,7 +48,7 @@ class Assign extends Statement {
       const newEnv = new Map(env);
       newEnv.set(this.name, this.expression);
 
-      return [doNothing, newEnv];
+      return [DO_NOTHING, newEnv];
     }
   }
   reducible(): boolean {
