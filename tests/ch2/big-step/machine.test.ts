@@ -1,16 +1,12 @@
-import { FALSE, Nmbr, TRUE } from "../../../src/ch2/big-step/expressions";
+import { FALSE, TRUE } from "../../../src/ch2/big-step/expressions";
 
 import {
   ExpressionMachine,
   StatementMachine,
 } from "../../../src/ch2/big-step/machine";
 
-import {
-  Assign,
-  DO_NOTHING,
-  While,
-} from "../../../src/ch2/big-step/statements";
-import { if_ as _if, add, b, env, lt, mul, n, seq, v } from "./test-utils";
+import { DO_NOTHING, While } from "../../../src/ch2/big-step/statements";
+import { _if, add, assign, b, env, lt, mul, n, seq, v } from "./test-utils";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -47,7 +43,7 @@ describe("Expression Machine reduction", () => {
 describe("Statement Machine", () => {
   test("Assign", () => {
     const machine = new StatementMachine(
-      new Assign("x", add(v("x"), n(1))),
+      assign("x", add(v("x"), n(1))),
       env(["x", n(2)]),
     );
 
@@ -58,7 +54,7 @@ describe("Statement Machine", () => {
 
   test("If Else", () => {
     const machine = new StatementMachine(
-      _if(v("x"), new Assign("y", n(1)), new Assign("y", n(2))),
+      _if(v("x"), assign("y", n(1)), assign("y", n(2))),
       env(["x", b(true)]),
     );
 
@@ -69,7 +65,7 @@ describe("Statement Machine", () => {
 
   test("If only", () => {
     const machine = new StatementMachine(
-      _if(v("x"), new Assign("y", n(1)), DO_NOTHING),
+      _if(v("x"), assign("y", n(1)), DO_NOTHING),
       env(["x", b(false)]),
     );
 
@@ -80,7 +76,7 @@ describe("Statement Machine", () => {
 
   test("Sequence", () => {
     const machine = new StatementMachine(
-      seq(new Assign("x", add(n(1), n(1))), new Assign("y", add(v("x"), n(3)))),
+      seq(assign("x", add(n(1), n(1))), assign("y", add(v("x"), n(3)))),
       env(),
     );
 
@@ -91,7 +87,7 @@ describe("Statement Machine", () => {
 
   test("While (x<2)", () => {
     const machine = new StatementMachine(
-      new While(lt(v("x"), n(2)), new Assign("x", add(v("x"), n(1)))),
+      new While(lt(v("x"), n(2)), assign("x", add(v("x"), n(1)))),
 
       env(["x", n(0)]),
     );
@@ -126,7 +122,7 @@ describe("Statement Machine", () => {
 
   test("While (x<5)", () => {
     const machine = new StatementMachine(
-      new While(lt(v("x"), n(5)), new Assign("x", mul(v("x"), n(3)))),
+      new While(lt(v("x"), n(5)), assign("x", mul(v("x"), n(3)))),
 
       env(["x", n(1)]),
     );
