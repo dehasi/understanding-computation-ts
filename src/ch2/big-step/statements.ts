@@ -106,7 +106,7 @@ class While extends Statement {
   }
 
   evaluate(env: Environment): Environment {
-    const cond = this.evaluate(env);
+    const cond = this.condition.evaluate(env);
     Boolean.assert(cond);
 
     if (cond.value) {

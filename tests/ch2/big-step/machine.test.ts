@@ -104,7 +104,7 @@ describe("Statement Machine", () => {
     );
 
     const evaluated = machine.run();
-    expect(evaluated).toEqual(env(["x", n(42)]));
+    expect(evaluated).toEqual(env(["x", n(2)]));
   });
 
   test("While (x<5)", () => {
@@ -115,6 +115,6 @@ describe("Statement Machine", () => {
     );
 
     const reductions = machine.run();
-    expect(reductions).toEqual([]);
+    expect(reductions).toEqual(env(["x", n(9)]));
   });
 });
