@@ -16,8 +16,6 @@ import {
 import {
   Assign,
   DO_NOTHING,
-  If,
-  Sequence,
   While,
 } from "../../../src/ch2/big-step/statements";
 import { if_ as _if, add, b, env, mul, n, seq, v } from "./test-utils";
@@ -26,7 +24,7 @@ describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
     const machine = new ExpressionMachine(
       add(mul(n(1), n(2)), mul(n(3), n(4))),
-      new Map(),
+      env(),
     );
 
     const evaluated = machine.run();
@@ -37,7 +35,7 @@ describe("Expression Machine reduction", () => {
   test("Boolean", () => {
     const machine = new ExpressionMachine(
       new LessThan(n(5), add(n(2), n(2))),
-      new Map(),
+      env(),
     );
 
     const evaluated = machine.run();
@@ -61,7 +59,7 @@ describe("Statement Machine", () => {
   test("Assign", () => {
     const machine = new StatementMachine(
       new Assign("x", add(v("x"), n(1))),
-      env(["x", new Nmbr(2)]),
+      env(["x", n(2)]),
     );
 
     const evaluated = machine.run();
@@ -71,7 +69,7 @@ describe("Statement Machine", () => {
 
   test("If Else", () => {
     const machine = new StatementMachine(
-      new If(new Variable("x"), new Assign("y", n(1)), new Assign("y", n(2))),
+      _if(new Variable("x"), new Assign("y", n(1)), new Assign("y", n(2))),
       env(["x", b(true)]),
     );
 
