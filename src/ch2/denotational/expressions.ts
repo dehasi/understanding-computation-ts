@@ -1,10 +1,6 @@
 class Expression {
-  evaluate(env: Map<String, Expression>): Expression {
+  to_JS(): string {
     throw new Error("Method must be implemented.");
-  }
-
-  inspect(): string {
-    return `${this}`;
   }
 }
 
@@ -16,8 +12,8 @@ class Nmbr extends Expression {
     this.value = value;
   }
 
-  evaluate(env: Map<String, Expression>): Expression {
-    return this;
+  to_JS(): string {
+    return `(e) => {return ${this.value};}`;
   }
 
   equals(that: any): boolean {
@@ -44,8 +40,8 @@ class Boolean extends Expression {
     this.value = value;
   }
 
-  evaluate(env: Map<String, Expression>): Expression {
-    return this;
+  to_JS(): string {
+    return `(e) => {return ${this.value};}`;
   }
 
   equals(that: any): boolean {
@@ -78,12 +74,7 @@ class LessThan extends Expression {
   }
 
   evaluate(env: Environment): Expression {
-    const left = this.left.evaluate(env);
-    const right = this.right.evaluate(env);
-
-    Nmbr.assertNmbr(left);
-    Nmbr.assertNmbr(right);
-    return new Boolean(left.value < right.value);
+    throw new Error("Method must be implemented.");
   }
 
   toString(): string {
@@ -102,12 +93,13 @@ class Add extends Expression {
   }
 
   evaluate(env: Map<String, Expression>): Expression {
-    const left = this.left.evaluate(env);
-    const right = this.right.evaluate(env);
+    throw new Error("Method must be implemented.");
+  }
 
-    Nmbr.assertNmbr(left);
-    Nmbr.assertNmbr(right);
-    return new Nmbr(left.value + right.value);
+  to_JS(): string {
+    const left = this.left.to_JS();
+    const right = this.right.to_JS();
+    return `(e) => {return ((${left})(e)) + ((${right})(e));}`;
   }
 
   toString(): string {
@@ -126,12 +118,7 @@ class Multiply extends Expression {
   }
 
   evaluate(env: Map<String, Expression>): Expression {
-    const left = this.left.evaluate(env);
-    const right = this.right.evaluate(env);
-
-    Nmbr.assertNmbr(left);
-    Nmbr.assertNmbr(right);
-    return new Nmbr(left.value * right.value);
+    throw new Error("Method must be implemented.");
   }
 
   toString(): string {
@@ -147,6 +134,9 @@ class Variable extends Expression {
     this.name = name;
   }
 
+  to_JS(): string {
+    return `(e) => {return e.get("${this.name}");}`;
+  }
   evaluate(env: Map<String, Expression>): Expression {
     if (env.has(this.name)) return env.get(this.name)!;
     else throw new Error(`No name ${this.name} in env: ${env}`);
