@@ -73,8 +73,10 @@ class LessThan extends Expression {
     this.right = right;
   }
 
-  evaluate(env: Environment): Expression {
-    throw new Error("Method must be implemented.");
+  to_JS(): string {
+    const left = this.left.to_JS();
+    const right = this.right.to_JS();
+    return `(e) => {return ((${left})(e)) < ((${right})(e));}`;
   }
 
   toString(): string {
@@ -90,10 +92,6 @@ class Add extends Expression {
     super();
     this.left = left;
     this.right = right;
-  }
-
-  evaluate(env: Map<String, Expression>): Expression {
-    throw new Error("Method must be implemented.");
   }
 
   to_JS(): string {
@@ -117,8 +115,10 @@ class Multiply extends Expression {
     this.right = right;
   }
 
-  evaluate(env: Map<String, Expression>): Expression {
-    throw new Error("Method must be implemented.");
+  to_JS(): string {
+    const left = this.left.to_JS();
+    const right = this.right.to_JS();
+    return `(e) => {return ((${left})(e)) * ((${right})(e));}`;
   }
 
   toString(): string {
