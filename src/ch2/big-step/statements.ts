@@ -1,28 +1,19 @@
 import { Expression, FALSE, TRUE, Environment } from "./expressions";
 
 class Statement {
-  // readonly reduceable: () => boolean;
-
-  reducible(): boolean {
+  evaluate(env: Environment): Environment {
     throw new Error("Method must be implemented.");
-  }
-
-  reduce(env: Environment): [Statement, Environment] {
-    throw new Error("Method must be implemented.");
-  }
-
-  inspect(): string {
-    return `${this}`;
   }
 }
-// Statements
+
 class DoNothing extends Statement {
+  evaluate(env: Environment): Environment {
+    return env;
+  }
   equals(other: any): boolean {
     return other instanceof DoNothing;
   }
-  reducible(): boolean {
-    return false;
-  }
+
   toString(): string {
     return "do-nothing";
   }
@@ -40,19 +31,15 @@ class Assign extends Statement {
     this.expression = expression;
   }
 
-  reduce(env: Environment): [Statement, Environment] {
-    if (this.expression.reducible()) {
-      return [new Assign(this.name, this.expression.reduce(env)), env];
-    } else {
-      const newEnv = new Map(env);
-      newEnv.set(this.name, this.expression);
+  reduce(env: Environment): Environment {
+    const expr = this.expression.evaluate(env);
 
-      return [DO_NOTHING, newEnv];
-    }
+    const newEnv = new Map(env);
+    newEnv.set(this.name, this.expression);
+
+    return newEnv;
   }
-  reducible(): boolean {
-    return true;
-  }
+
   toString(): string {
     return `${this.name} = ${this.expression}`;
   }

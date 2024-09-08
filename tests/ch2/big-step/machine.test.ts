@@ -47,7 +47,7 @@ describe("Expression Machine reduction", () => {
       new Map(),
     );
 
-    const reductions = machine.run().map((x) => x.toString());
+    const reductions = machine.run();
 
     expect(reductions).toEqual(["5 < 2 + 2, {}", "5 < 4, {}", "false, {}"]);
   });
@@ -61,7 +61,7 @@ describe("Expression Machine reduction", () => {
       ]),
     );
 
-    const reductions = machine.run().map((x) => x.toString());
+    const reductions = machine.run();
 
     expect(reductions).toEqual([
       "x + y, {x=>3, y=>4}",

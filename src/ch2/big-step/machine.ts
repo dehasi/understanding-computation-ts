@@ -10,21 +10,11 @@ export class ExpressionMachine {
     this.environment = environment;
   }
 
-  step(): Expression {
-    return (this.expression = this.expression.reduce(this.environment));
+  run() {
+    return this.expression.evaluate(this.environment);
   }
 
-  run(): Array<string> {
-    const result = new Array<string>();
-
-    while (this.expression.reducible()) {
-      result.push(`${this.expression}, ${this.str(this.environment)}`);
-      this.step();
-    }
-    result.push(`${this.expression}, ${this.str(this.environment)}`);
-    return result;
-  }
-  private str(map: Map<String, Expression>): string {
+  private static str(map: Map<String, Expression>): string {
     const res = Array.from(map)
       .map(([key, value]) => `${key}=>${value}`)
       .join(", ");
@@ -41,21 +31,8 @@ export class StatementMachine {
     this.environment = environment;
   }
 
-  step(): void {
-    [this.statement, this.environment] = this.statement.reduce(
-      this.environment,
-    );
-  }
-
-  run(): Array<string> {
-    const result = new Array<string>();
-
-    while (this.statement.reducible()) {
-      result.push(`${this.statement}, ${this.str(this.environment)}`);
-      this.step();
-    }
-    result.push(`${this.statement}, ${this.str(this.environment)}`);
-    return result;
+  run() {
+    return this.statement.evaluate(this.environment);
   }
   private str(map: Map<String, Expression>): string {
     const res = Array.from(map)
