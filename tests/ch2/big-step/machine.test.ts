@@ -1,7 +1,5 @@
 import {
   Add,
-  Boolean,
-  Expression,
   FALSE,
   LessThan,
   Multiply,
@@ -22,108 +20,86 @@ import {
   Sequence,
   While,
 } from "../../../src/ch2/big-step/statements";
+import { if_ as _if, add, b, env, mul, n, seq, v } from "./test-utils";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
     const machine = new ExpressionMachine(
-      new Add(
-        new Multiply(new Nmbr(1), new Nmbr(2)),
-        new Multiply(new Nmbr(3), new Nmbr(4)),
-      ),
+      add(mul(n(1), n(2)), mul(n(3), n(4))),
       new Map(),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(new Nmbr(14));
+    expect(evaluated).toEqual(n(14));
   });
 
   test("Boolean", () => {
     const machine = new ExpressionMachine(
-      new LessThan(new Nmbr(5), new Add(new Nmbr(2), new Nmbr(2))),
+      new LessThan(n(5), add(n(2), n(2))),
       new Map(),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(new Boolean(false));
+    expect(evaluated).toEqual(b(false));
   });
 
   test("Variable", () => {
     const machine = new ExpressionMachine(
-      new Add(new Variable("x"), new Variable("y")),
-      new Map([
-        ["x", new Nmbr(3)],
-        ["y", new Nmbr(4)],
-      ]),
+      add(v("x"), v("y")),
+      env(["x", n(3)], ["y", n(4)]),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(new Nmbr(7));
+    expect(evaluated).toEqual(n(7));
   });
 });
 
 describe("Statement Machine", () => {
   test("Assign", () => {
     const machine = new StatementMachine(
-      new Assign("x", new Add(new Variable("x"), new Nmbr(1))),
-      new Map([["x", new Nmbr(2)]]),
+      new Assign("x", add(v("x"), n(1))),
+      env(["x", new Nmbr(2)]),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(new Map([["x", new Nmbr(3)]]));
+    expect(evaluated).toEqual(env(["x", n(3)]));
   });
 
   test("If Else", () => {
     const machine = new StatementMachine(
-      new If(
-        new Variable("x"),
-        new Assign("y", new Nmbr(1)),
-        new Assign("y", new Nmbr(2)),
-      ),
-      new Map([["x", TRUE]]),
+      new If(new Variable("x"), new Assign("y", n(1)), new Assign("y", n(2))),
+      env(["x", b(true)]),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(
-      new Map<string, Expression>([
-        ["x", TRUE],
-        ["y", new Nmbr(1)],
-      ]),
-    );
+    expect(evaluated).toEqual(env(["x", TRUE], ["y", n(1)]));
   });
 
   test("If only", () => {
     const machine = new StatementMachine(
-      new If(new Variable("x"), new Assign("y", new Nmbr(1)), DO_NOTHING),
-      new Map([["x", FALSE]]),
+      _if(v("x"), new Assign("y", n(1)), DO_NOTHING),
+      env(["x", b(false)]),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(new Map([["x", FALSE]]));
+    expect(evaluated).toEqual(env(["x", FALSE]));
   });
 
   test("Sequence", () => {
     const machine = new StatementMachine(
-      new Sequence(
-        new Assign("x", new Add(new Nmbr(1), new Nmbr(1))),
-        new Assign("y", new Add(new Variable("x"), new Nmbr(3))),
-      ),
+      seq(new Assign("x", add(n(1), n(1))), new Assign("y", add(v("x"), n(3)))),
       new Map(),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(
-      new Map([
-        ["x", new Nmbr(2)],
-        ["y", new Nmbr(5)],
-      ]),
-    );
+    expect(evaluated).toEqual(env(["x", new Nmbr(2)], ["y", new Nmbr(5)]));
   });
 
   test("While (x<2)", () => {
