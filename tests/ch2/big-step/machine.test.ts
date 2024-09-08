@@ -6,7 +6,19 @@ import {
 } from "../../../src/ch2/big-step/machine";
 
 import { DO_NOTHING, While } from "../../../src/ch2/big-step/statements";
-import { _if, add, assign, b, env, lt, mul, n, seq, v } from "./test-utils";
+import {
+  _if,
+  _while,
+  add,
+  assign,
+  b,
+  env,
+  lt,
+  mul,
+  n,
+  seq,
+  v,
+} from "./test-utils";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -87,69 +99,22 @@ describe("Statement Machine", () => {
 
   test("While (x<2)", () => {
     const machine = new StatementMachine(
-      new While(lt(v("x"), n(2)), assign("x", add(v("x"), n(1)))),
-
+      _while(lt(v("x"), n(2)), assign("x", add(v("x"), n(1)))),
       env(["x", n(0)]),
     );
 
-    const reductions = machine.run();
-    expect(reductions).toEqual([
-      "while (x < 2) { x = x + 1 }, {x=>0}",
-      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
-      "if (0 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
-      "if (true) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>0}",
-      "x = x + 1; while (x < 2) { x = x + 1 }, {x=>0}",
-      "x = 0 + 1; while (x < 2) { x = x + 1 }, {x=>0}",
-      "x = 1; while (x < 2) { x = x + 1 }, {x=>0}",
-      "do-nothing; while (x < 2) { x = x + 1 }, {x=>1}",
-
-      "while (x < 2) { x = x + 1 }, {x=>1}",
-      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
-      "if (1 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
-      "if (true) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>1}",
-      "x = x + 1; while (x < 2) { x = x + 1 }, {x=>1}",
-      "x = 1 + 1; while (x < 2) { x = x + 1 }, {x=>1}",
-      "x = 2; while (x < 2) { x = x + 1 }, {x=>1}",
-      "do-nothing; while (x < 2) { x = x + 1 }, {x=>2}",
-
-      "while (x < 2) { x = x + 1 }, {x=>2}",
-      "if (x < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
-      "if (2 < 2) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
-      "if (false) {x = x + 1; while (x < 2) { x = x + 1 }} else {do-nothing}, {x=>2}",
-      "do-nothing, {x=>2}",
-    ]);
+    const evaluated = machine.run();
+    expect(evaluated).toEqual(env(["x", n(42)]));
   });
 
   test("While (x<5)", () => {
     const machine = new StatementMachine(
-      new While(lt(v("x"), n(5)), assign("x", mul(v("x"), n(3)))),
+      _while(lt(v("x"), n(5)), assign("x", mul(v("x"), n(3)))),
 
       env(["x", n(1)]),
     );
 
     const reductions = machine.run();
-    expect(reductions).toEqual([
-      "while (x < 5) { x = x * 3 }, {x=>1}",
-      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
-      "if (1 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
-      "if (true) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>1}",
-      "x = x * 3; while (x < 5) { x = x * 3 }, {x=>1}",
-      "x = 1 * 3; while (x < 5) { x = x * 3 }, {x=>1}",
-      "x = 3; while (x < 5) { x = x * 3 }, {x=>1}",
-      "do-nothing; while (x < 5) { x = x * 3 }, {x=>3}",
-      "while (x < 5) { x = x * 3 }, {x=>3}",
-      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
-      "if (3 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
-      "if (true) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>3}",
-      "x = x * 3; while (x < 5) { x = x * 3 }, {x=>3}",
-      "x = 3 * 3; while (x < 5) { x = x * 3 }, {x=>3}",
-      "x = 9; while (x < 5) { x = x * 3 }, {x=>3}",
-      "do-nothing; while (x < 5) { x = x * 3 }, {x=>9}",
-      "while (x < 5) { x = x * 3 }, {x=>9}",
-      "if (x < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
-      "if (9 < 5) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
-      "if (false) {x = x * 3; while (x < 5) { x = x * 3 }} else {do-nothing}, {x=>9}",
-      "do-nothing, {x=>9}",
-    ]);
+    expect(reductions).toEqual([]);
   });
 });

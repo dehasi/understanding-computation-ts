@@ -56,7 +56,7 @@ class Boolean extends Expression {
     return `${this.value}`;
   }
 
-  static assertBoolean(x: unknown): asserts x is Boolean {
+  static assert(x: unknown): asserts x is Boolean {
     if (x instanceof Boolean) return;
     else
       throw new Error(

@@ -8,7 +8,13 @@ import {
   Nmbr,
   Variable,
 } from "../../../src/ch2/big-step/expressions";
-import { Assign, If, Sequence, Statement } from "../../../src/ch2/big-step/statements";
+import {
+  Assign,
+  If,
+  Sequence,
+  Statement,
+  While,
+} from "../../../src/ch2/big-step/statements";
 
 export const env = (
   ...entries: readonly [string, Expression][]
@@ -39,6 +45,10 @@ export const _if = (cond: Expression, seq: Statement, alt: Statement): If => {
   return new If(cond, seq, alt);
 };
 
+export const _while = (cond: Expression, body: Statement): While => {
+  return new While(cond, body);
+};
+
 export const seq = (first: Statement, second: Statement): Sequence => {
   return new Sequence(first, second);
 };
@@ -47,6 +57,6 @@ export const lt = (left: Expression, right: Expression): LessThan => {
   return new LessThan(left, right);
 };
 
-export const assign = (name: string, expression: Expression): Assign {
-  return new Assign(name, expression)
-}
+export const assign = (name: string, expression: Expression): Assign => {
+  return new Assign(name, expression);
+};

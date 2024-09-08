@@ -63,7 +63,7 @@ class If extends Statement {
 
   evaluate(env: Environment): Environment {
     const condition = this.condition.evaluate(env);
-    Boolean.assertBoolean(condition);
+    Boolean.assert(condition);
     if (condition.value) {
       return this.consequence.evaluate(env);
     } else {
@@ -106,11 +106,17 @@ class While extends Statement {
   }
 
   evaluate(env: Environment): Environment {
-    throw new Error();
+    const cond = this.evaluate(env);
+    Boolean.assert(cond);
+
+    if (cond.value) {
+      const new_env = this.body.evaluate(env);
+      return this.evaluate(new_env);
+    } else {
+      return env;
+    }
   }
-  reducible(): boolean {
-    return true;
-  }
+
   toString(): string {
     return `while (${this.condition}) { ${this.body} }`;
   }
