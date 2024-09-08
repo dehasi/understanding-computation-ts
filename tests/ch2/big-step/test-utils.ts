@@ -3,6 +3,7 @@ import {
   Boolean,
   Environment,
   Expression,
+  LessThan,
   Multiply,
   Nmbr,
   Variable,
@@ -40,4 +41,8 @@ export const if_ = (cond: Expression, seq: Statement, alt: Statement): If => {
 
 export const seq = (first: Statement, second: Statement): Sequence => {
   return new Sequence(first, second);
+};
+
+export const lt = (left: Expression, right: Expression): LessThan => {
+  return new LessThan(left, right);
 };

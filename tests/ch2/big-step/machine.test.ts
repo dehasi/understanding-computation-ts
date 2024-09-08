@@ -1,12 +1,4 @@
-import {
-  Add,
-  FALSE,
-  LessThan,
-  Multiply,
-  Nmbr,
-  TRUE,
-  Variable,
-} from "../../../src/ch2/big-step/expressions";
+import { FALSE, Nmbr, TRUE } from "../../../src/ch2/big-step/expressions";
 
 import {
   ExpressionMachine,
@@ -18,7 +10,7 @@ import {
   DO_NOTHING,
   While,
 } from "../../../src/ch2/big-step/statements";
-import { if_ as _if, add, b, env, mul, n, seq, v } from "./test-utils";
+import { if_ as _if, add, b, env, lt, mul, n, seq, v } from "./test-utils";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {
@@ -33,10 +25,7 @@ describe("Expression Machine reduction", () => {
   });
 
   test("Boolean", () => {
-    const machine = new ExpressionMachine(
-      new LessThan(n(5), add(n(2), n(2))),
-      env(),
-    );
+    const machine = new ExpressionMachine(lt(n(5), add(n(2), n(2))), env());
 
     const evaluated = machine.run();
 
@@ -69,7 +58,7 @@ describe("Statement Machine", () => {
 
   test("If Else", () => {
     const machine = new StatementMachine(
-      _if(new Variable("x"), new Assign("y", n(1)), new Assign("y", n(2))),
+      _if(v("x"), new Assign("y", n(1)), new Assign("y", n(2))),
       env(["x", b(true)]),
     );
 
@@ -92,22 +81,19 @@ describe("Statement Machine", () => {
   test("Sequence", () => {
     const machine = new StatementMachine(
       seq(new Assign("x", add(n(1), n(1))), new Assign("y", add(v("x"), n(3)))),
-      new Map(),
+      env(),
     );
 
     const evaluated = machine.run();
 
-    expect(evaluated).toEqual(env(["x", new Nmbr(2)], ["y", new Nmbr(5)]));
+    expect(evaluated).toEqual(env(["x", n(2)], ["y", n(5)]));
   });
 
   test("While (x<2)", () => {
     const machine = new StatementMachine(
-      new While(
-        new LessThan(new Variable("x"), new Nmbr(2)),
-        new Assign("x", new Add(new Variable("x"), new Nmbr(1))),
-      ),
+      new While(lt(v("x"), n(2)), new Assign("x", add(v("x"), n(1)))),
 
-      new Map([["x", new Nmbr(0)]]),
+      env(["x", n(0)]),
     );
 
     const reductions = machine.run();
@@ -140,12 +126,9 @@ describe("Statement Machine", () => {
 
   test("While (x<5)", () => {
     const machine = new StatementMachine(
-      new While(
-        new LessThan(new Variable("x"), new Nmbr(5)),
-        new Assign("x", new Multiply(new Variable("x"), new Nmbr(3))),
-      ),
+      new While(lt(v("x"), n(5)), new Assign("x", mul(v("x"), n(3)))),
 
-      new Map([["x", new Nmbr(1)]]),
+      env(["x", n(1)]),
     );
 
     const reductions = machine.run();
