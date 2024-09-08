@@ -87,7 +87,7 @@ class Sequence extends Statement {
     this.second = second;
   }
 
-  reduce(env: Environment): Environment {
+  evaluate(env: Environment): Environment {
     return this.second.evaluate(this.first.evaluate(env));
   }
   toString(): string {

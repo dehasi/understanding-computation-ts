@@ -2,6 +2,7 @@ import {
   Add,
   Boolean,
   Expression,
+  FALSE,
   LessThan,
   Multiply,
   Nmbr,
@@ -98,16 +99,12 @@ describe("Statement Machine", () => {
   test("If only", () => {
     const machine = new StatementMachine(
       new If(new Variable("x"), new Assign("y", new Nmbr(1)), DO_NOTHING),
-      new Map([["x", new Boolean(false)]]),
+      new Map([["x", FALSE]]),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "if (x) {y = 1} else {do-nothing}, {x=>false}",
-      "if (false) {y = 1} else {do-nothing}, {x=>false}",
-      "do-nothing, {x=>false}",
-    ]);
+    expect(evaluated).toEqual(new Map([["x", FALSE]]));
   });
 
   test("Sequence", () => {
@@ -119,17 +116,14 @@ describe("Statement Machine", () => {
       new Map(),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "x = 1 + 1; y = x + 3, {}",
-      "x = 2; y = x + 3, {}",
-      "do-nothing; y = x + 3, {x=>2}",
-      "y = x + 3, {x=>2}",
-      "y = 2 + 3, {x=>2}",
-      "y = 5, {x=>2}",
-      "do-nothing, {x=>2, y=>5}",
-    ]);
+    expect(evaluated).toEqual(
+      new Map([
+        ["x", new Nmbr(2)],
+        ["y", new Nmbr(5)],
+      ]),
+    );
   });
 
   test("While (x<2)", () => {
