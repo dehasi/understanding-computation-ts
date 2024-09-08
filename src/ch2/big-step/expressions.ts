@@ -1,11 +1,5 @@
 class Expression {
-  // readonly reduceable: () => boolean;
-
-  reducible(): boolean {
-    throw new Error("Method must be implemented.");
-  }
-
-  reduce(env: Map<String, Expression>): Expression {
+  evaluate(env: Map<String, Expression>): Expression {
     throw new Error("Method must be implemented.");
   }
 
@@ -22,8 +16,8 @@ class Nmbr extends Expression {
     this.value = value;
   }
 
-  reducible(): boolean {
-    return false;
+  evaluate(env: Map<String, Expression>): Expression {
+    return this;
   }
 
   equals(that: any): boolean {
@@ -50,8 +44,8 @@ class Boolean extends Expression {
     this.value = value;
   }
 
-  reducible(): boolean {
-    return false;
+  evaluate(env: Map<String, Expression>): Expression {
+    return this;
   }
 
   equals(that: any): boolean {
@@ -83,19 +77,13 @@ class LessThan extends Expression {
     this.right = right;
   }
 
-  reduce(env: Map<String, Expression>): Expression {
-    if (this.left.reducible()) {
-      return new LessThan(this.left.reduce(env), this.right);
-    } else if (this.right.reducible()) {
-      return new LessThan(this.left, this.right.reduce(env));
-    } else {
-      return new Boolean(
-        (this.left as Nmbr).value < (this.right as Nmbr).value,
-      );
-    }
-  }
-  reducible(): boolean {
-    return true;
+  evaluate(env: Environment): Expression {
+    const left = this.left.evaluate(env);
+    const right = this.right.evaluate(env);
+
+    Nmbr.assertNmbr(left);
+    Nmbr.assertNmbr(right);
+    return new Boolean(left.value < right.value);
   }
 
   toString(): string {
@@ -113,19 +101,13 @@ class Add extends Expression {
     this.right = right;
   }
 
-  reduce(env: Map<String, Expression>): Expression {
-    if (this.left.reducible()) {
-      return new Add(this.left.reduce(env), this.right);
-    } else if (this.right.reducible()) {
-      return new Add(this.left, this.right.reduce(env));
-    } else {
-      Nmbr.assertNmbr(this.left);
-      Nmbr.assertNmbr(this.right);
-      return new Nmbr(this.left.value + this.right.value);
-    }
-  }
-  reducible(): boolean {
-    return true;
+  evaluate(env: Map<String, Expression>): Expression {
+    const left = this.left.evaluate(env);
+    const right = this.right.evaluate(env);
+
+    Nmbr.assertNmbr(left);
+    Nmbr.assertNmbr(right);
+    return new Nmbr(left.value + right.value);
   }
 
   toString(): string {
@@ -143,20 +125,15 @@ class Multiply extends Expression {
     this.right = right;
   }
 
-  reduce(env: Map<String, Expression>): Expression {
-    if (this.left.reducible()) {
-      return new Multiply(this.left.reduce(env), this.right);
-    } else if (this.right.reducible()) {
-      return new Multiply(this.left, this.right.reduce(env));
-    } else {
-      Nmbr.assertNmbr(this.left);
-      Nmbr.assertNmbr(this.right);
-      return new Nmbr(this.left.value * this.right.value);
-    }
+  evaluate(env: Map<String, Expression>): Expression {
+    const left = this.left.evaluate(env);
+    const right = this.right.evaluate(env);
+
+    Nmbr.assertNmbr(left);
+    Nmbr.assertNmbr(right);
+    return new Nmbr(left.value * right.value);
   }
-  reducible(): boolean {
-    return true;
-  }
+
   toString(): string {
     return `${this.left} * ${this.right}`;
   }
@@ -170,11 +147,7 @@ class Variable extends Expression {
     this.name = name;
   }
 
-  reducible(): boolean {
-    return true;
-  }
-
-  reduce(env: Map<String, Expression>): Expression {
+  evaluate(env: Map<String, Expression>): Expression {
     if (env.has(this.name)) return env.get(this.name)!;
     else throw new Error(`No name ${this.name} in env: ${env}`);
   }

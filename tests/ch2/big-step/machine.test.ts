@@ -5,11 +5,13 @@ import {
   Multiply,
   Nmbr,
   Variable,
-} from "../../../src/ch2/small-step/expressions";
+} from "../../../src/ch2/big-step/expressions";
+
 import {
   ExpressionMachine,
   StatementMachine,
-} from "../../../src/ch2/small-step/machine";
+} from "../../../src/ch2/big-step/machine";
+
 import {
   Assign,
   DO_NOTHING,
@@ -17,7 +19,7 @@ import {
   Sequence,
   While,
   MyWhile,
-} from "../../../src/ch2/small-step/statements";
+} from "../../../src/ch2/big-step/statements";
 
 describe("Expression Machine reduction", () => {
   test("Nmbr", () => {

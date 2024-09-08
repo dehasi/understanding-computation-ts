@@ -1,4 +1,4 @@
-import { Expression } from "./expressions";
+import { Expression, Environment } from "./expressions";
 import { Statement } from "./statements";
 
 export class ExpressionMachine {
