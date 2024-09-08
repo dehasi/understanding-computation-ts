@@ -1,4 +1,3 @@
-import { Environment } from "./commons";
 import { Expression } from "./expressions";
 import { Statement } from "./statements";
 

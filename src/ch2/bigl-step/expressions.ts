@@ -35,7 +35,10 @@ class Nmbr extends Expression {
 
   static assertNmbr(x: unknown): asserts x is Nmbr {
     if (x instanceof Nmbr) return;
-    else throw new Error("Expected Nmbr, got: " + (x?.constructor?.name || typeof x));
+    else
+      throw new Error(
+        "Expected Nmbr, got: " + (x?.constructor?.name || typeof x),
+      );
   }
 }
 
@@ -61,7 +64,10 @@ class Boolean extends Expression {
 
   static assertBoolean(x: unknown): asserts x is Boolean {
     if (x instanceof Boolean) return;
-    else throw new Error("Expected Boolean, got: " + (x?.constructor?.name || typeof x));
+    else
+      throw new Error(
+        "Expected Boolean, got: " + (x?.constructor?.name || typeof x),
+      );
   }
 }
 export const TRUE = new Boolean(true);
@@ -113,8 +119,8 @@ class Add extends Expression {
     } else if (this.right.reducible()) {
       return new Add(this.left, this.right.reduce(env));
     } else {
-      Nmbr.assertNmbr(this.left)
-      Nmbr.assertNmbr(this.right)
+      Nmbr.assertNmbr(this.left);
+      Nmbr.assertNmbr(this.right);
       return new Nmbr(this.left.value + this.right.value);
     }
   }
@@ -143,8 +149,8 @@ class Multiply extends Expression {
     } else if (this.right.reducible()) {
       return new Multiply(this.left, this.right.reduce(env));
     } else {
-      Nmbr.assertNmbr(this.left)
-      Nmbr.assertNmbr(this.right)
+      Nmbr.assertNmbr(this.left);
+      Nmbr.assertNmbr(this.right);
       return new Nmbr(this.left.value * this.right.value);
     }
   }
@@ -178,5 +184,5 @@ class Variable extends Expression {
   }
 }
 
-
+export type Environment = Map<String, Expression>;
 export { Expression, Nmbr, Add, Multiply, Boolean, LessThan, Variable };

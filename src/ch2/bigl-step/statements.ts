@@ -1,5 +1,4 @@
-import { Environment } from "./commons";
-import { Expression, FALSE, TRUE } from "./expressions";
+import { Expression, FALSE, TRUE, Environment } from "./expressions";
 
 class Statement {
   // readonly reduceable: () => boolean;
@@ -60,12 +59,15 @@ class Assign extends Statement {
 }
 
 class If extends Statement {
-
   private readonly condition: Expression;
   private readonly consequence: Statement;
   private readonly alternative: Statement;
 
-  constructor(condition: Expression, consequence: Statement, alternative: Statement) {
+  constructor(
+    condition: Expression,
+    consequence: Statement,
+    alternative: Statement,
+  ) {
     super();
     this.condition = condition;
     this.consequence = consequence;
@@ -74,15 +76,17 @@ class If extends Statement {
 
   reduce(env: Environment): [Statement, Environment] {
     if (this.condition.reducible()) {
-      return [new If(this.condition.reduce(env), this.consequence, this.alternative), env]
+      return [
+        new If(this.condition.reduce(env), this.consequence, this.alternative),
+        env,
+      ];
     } else {
-
       if (TRUE.equals(this.condition)) {
-        return [this.consequence, env]
+        return [this.consequence, env];
       } else if (FALSE.equals(this.condition)) {
-        return [this.alternative, env]
+        return [this.alternative, env];
       } else {
-        throw new Error("Expected Boolean, got " + typeof this.condition)
+        throw new Error("Expected Boolean, got " + typeof this.condition);
       }
     }
   }
@@ -95,7 +99,6 @@ class If extends Statement {
 }
 
 class Sequence extends Statement {
-
   private readonly first: Statement;
   private readonly second: Statement;
 
@@ -108,10 +111,10 @@ class Sequence extends Statement {
 
   reduce(env: Environment): [Statement, Environment] {
     if (this.first instanceof DoNothing) {
-      return [this.second, env]
+      return [this.second, env];
     }
     const [reduced, newEnv] = this.first.reduce(env);
-    return [new Sequence(reduced, this.second), newEnv]
+    return [new Sequence(reduced, this.second), newEnv];
   }
   reducible(): boolean {
     return true;
@@ -127,33 +130,35 @@ class MyWhile extends Statement {
   private readonly body: Statement;
   private readonly prev?: MyWhile;
 
-  constructor(condition: Expression, body: Statement, prev: MyWhile | undefined = undefined) {
+  constructor(
+    condition: Expression,
+    body: Statement,
+    prev: MyWhile | undefined = undefined,
+  ) {
     super();
     this.condition = condition;
-    this.body = body
-    this.prev = prev
+    this.body = body;
+    this.prev = prev;
   }
 
   reduce(env: Environment): [Statement, Environment] {
     if (this.condition.reducible()) {
-      return [new MyWhile(this.condition.reduce(env), this.body, this), env]
+      return [new MyWhile(this.condition.reduce(env), this.body, this), env];
     }
 
     if (TRUE.equals(this.condition)) {
       if (this.body.reducible()) {
         const [reduced_body, reduced_env] = this.body.reduce(env);
-        return [new MyWhile(this.condition, reduced_body, this), reduced_env]
+        return [new MyWhile(this.condition, reduced_body, this), reduced_env];
       }
       // while is finished
       let p: MyWhile | undefined = this;
       while (p.prev) p = p.prev;
       return [p, env];
-
-
     } else if (FALSE.equals(this.condition)) {
-      return [DO_NOTHING, env]
+      return [DO_NOTHING, env];
     } else {
-      throw new Error("Expected Boolean, got " + typeof this.condition)
+      throw new Error("Expected Boolean, got " + typeof this.condition);
     }
   }
   reducible(): boolean {
@@ -164,21 +169,21 @@ class MyWhile extends Statement {
   }
 }
 
-
 class While extends Statement {
   private readonly condition: Expression;
   private readonly body: Statement;
 
-
   constructor(condition: Expression, body: Statement) {
     super();
     this.condition = condition;
-    this.body = body
-
+    this.body = body;
   }
 
   reduce(env: Environment): [Statement, Environment] {
-    return [new If(this.condition, new Sequence(this.body, this), DO_NOTHING), env]
+    return [
+      new If(this.condition, new Sequence(this.body, this), DO_NOTHING),
+      env,
+    ];
   }
   reducible(): boolean {
     return true;
