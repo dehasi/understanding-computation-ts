@@ -1,9 +1,11 @@
 import {
   Add,
   Boolean,
+  Expression,
   LessThan,
   Multiply,
   Nmbr,
+  TRUE,
   Variable,
 } from "../../../src/ch2/big-step/expressions";
 
@@ -18,7 +20,6 @@ import {
   If,
   Sequence,
   While,
-  MyWhile,
 } from "../../../src/ch2/big-step/statements";
 
 describe("Expression Machine reduction", () => {
@@ -31,14 +32,9 @@ describe("Expression Machine reduction", () => {
       new Map(),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "1 * 2 + 3 * 4, {}",
-      "2 + 3 * 4, {}",
-      "2 + 12, {}",
-      "14, {}",
-    ]);
+    expect(evaluated).toEqual(new Nmbr(14));
   });
 
   test("Boolean", () => {
@@ -47,9 +43,9 @@ describe("Expression Machine reduction", () => {
       new Map(),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual(["5 < 2 + 2, {}", "5 < 4, {}", "false, {}"]);
+    expect(evaluated).toEqual(new Boolean(false));
   });
 
   test("Variable", () => {
@@ -61,14 +57,9 @@ describe("Expression Machine reduction", () => {
       ]),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "x + y, {x=>3, y=>4}",
-      "3 + y, {x=>3, y=>4}",
-      "3 + 4, {x=>3, y=>4}",
-      "7, {x=>3, y=>4}",
-    ]);
+    expect(evaluated).toEqual(new Nmbr(7));
   });
 });
 
@@ -79,14 +70,9 @@ describe("Statement Machine", () => {
       new Map([["x", new Nmbr(2)]]),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "x = x + 1, {x=>2}",
-      "x = 2 + 1, {x=>2}",
-      "x = 3, {x=>2}",
-      "do-nothing, {x=>3}",
-    ]);
+    expect(evaluated).toEqual(new Map([["x", new Nmbr(3)]]));
   });
 
   test("If Else", () => {
@@ -96,17 +82,17 @@ describe("Statement Machine", () => {
         new Assign("y", new Nmbr(1)),
         new Assign("y", new Nmbr(2)),
       ),
-      new Map([["x", new Boolean(true)]]),
+      new Map([["x", TRUE]]),
     );
 
-    const reductions = machine.run();
+    const evaluated = machine.run();
 
-    expect(reductions).toEqual([
-      "if (x) {y = 1} else {y = 2}, {x=>true}",
-      "if (true) {y = 1} else {y = 2}, {x=>true}",
-      "y = 1, {x=>true}",
-      "do-nothing, {x=>true, y=>1}",
-    ]);
+    expect(evaluated).toEqual(
+      new Map<string, Expression>([
+        ["x", TRUE],
+        ["y", new Nmbr(1)],
+      ]),
+    );
   });
 
   test("If only", () => {
@@ -143,37 +129,6 @@ describe("Statement Machine", () => {
       "y = 2 + 3, {x=>2}",
       "y = 5, {x=>2}",
       "do-nothing, {x=>2, y=>5}",
-    ]);
-  });
-
-  test("MyWhile", () => {
-    const machine = new StatementMachine(
-      new MyWhile(
-        new LessThan(new Variable("x"), new Nmbr(2)),
-        new Assign("x", new Add(new Variable("x"), new Nmbr(1))),
-      ),
-
-      new Map([["x", new Nmbr(0)]]),
-    );
-
-    const reductions = machine.run();
-    expect(reductions).toEqual([
-      "while(x < 2) {x = x + 1}, {x=>0}",
-      "while(0 < 2) {x = x + 1}, {x=>0}",
-      "while(true) {x = x + 1}, {x=>0}",
-      "while(true) {x = 0 + 1}, {x=>0}",
-      "while(true) {x = 1}, {x=>0}",
-      "while(true) {do-nothing}, {x=>1}",
-      "while(x < 2) {x = x + 1}, {x=>1}",
-      "while(1 < 2) {x = x + 1}, {x=>1}",
-      "while(true) {x = x + 1}, {x=>1}",
-      "while(true) {x = 1 + 1}, {x=>1}",
-      "while(true) {x = 2}, {x=>1}",
-      "while(true) {do-nothing}, {x=>2}",
-      "while(x < 2) {x = x + 1}, {x=>2}",
-      "while(2 < 2) {x = x + 1}, {x=>2}",
-      "while(false) {x = x + 1}, {x=>2}",
-      "do-nothing, {x=>2}",
     ]);
   });
 

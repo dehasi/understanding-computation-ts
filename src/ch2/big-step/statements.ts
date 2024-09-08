@@ -1,4 +1,4 @@
-import { Expression, FALSE, TRUE, Environment } from "./expressions";
+import { Expression, FALSE, TRUE, Environment, Boolean } from "./expressions";
 
 class Statement {
   evaluate(env: Environment): Environment {
@@ -31,11 +31,11 @@ class Assign extends Statement {
     this.expression = expression;
   }
 
-  reduce(env: Environment): Environment {
+  evaluate(env: Environment): Environment {
     const expr = this.expression.evaluate(env);
 
     const newEnv = new Map(env);
-    newEnv.set(this.name, this.expression);
+    newEnv.set(this.name, expr);
 
     return newEnv;
   }
@@ -61,25 +61,16 @@ class If extends Statement {
     this.alternative = alternative;
   }
 
-  reduce(env: Environment): [Statement, Environment] {
-    if (this.condition.reducible()) {
-      return [
-        new If(this.condition.reduce(env), this.consequence, this.alternative),
-        env,
-      ];
+  evaluate(env: Environment): Environment {
+    const condition = this.condition.evaluate(env);
+    Boolean.assertBoolean(condition);
+    if (condition.value) {
+      return this.consequence.evaluate(env);
     } else {
-      if (TRUE.equals(this.condition)) {
-        return [this.consequence, env];
-      } else if (FALSE.equals(this.condition)) {
-        return [this.alternative, env];
-      } else {
-        throw new Error("Expected Boolean, got " + typeof this.condition);
-      }
+      return this.alternative.evaluate(env);
     }
   }
-  reducible(): boolean {
-    return true;
-  }
+
   toString(): string {
     return `if (${this.condition}) {${this.consequence}} else {${this.alternative}}`;
   }
@@ -96,15 +87,8 @@ class Sequence extends Statement {
     this.second = second;
   }
 
-  reduce(env: Environment): [Statement, Environment] {
-    if (this.first instanceof DoNothing) {
-      return [this.second, env];
-    }
-    const [reduced, newEnv] = this.first.reduce(env);
-    return [new Sequence(reduced, this.second), newEnv];
-  }
-  reducible(): boolean {
-    return true;
+  reduce(env: Environment): Environment {
+    return this.second.evaluate(this.first.evaluate(env));
   }
   toString(): string {
     return `${this.first}; ${this.second}`;
@@ -121,11 +105,8 @@ class While extends Statement {
     this.body = body;
   }
 
-  reduce(env: Environment): [Statement, Environment] {
-    return [
-      new If(this.condition, new Sequence(this.body, this), DO_NOTHING),
-      env,
-    ];
+  evaluate(env: Environment): Environment {
+    throw new Error();
   }
   reducible(): boolean {
     return true;
@@ -134,4 +115,4 @@ class While extends Statement {
     return `while (${this.condition}) { ${this.body} }`;
   }
 }
-export { Statement, Assign, DoNothing, If, Sequence, MyWhile, While };
+export { Statement, Assign, DoNothing, If, Sequence, While };
