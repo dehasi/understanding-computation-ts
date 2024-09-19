@@ -1,5 +1,5 @@
 import { FARule } from "../../src/ch3/common"
-import { NFARulebook } from "../../src/ch3/nondeterministic-finite-automata"
+import { NFA, NFARulebook } from "../../src/ch3/nondeterministic-finite-automata"
 import { set } from "./test-utils"
 
 describe('NFA', () => {
@@ -15,5 +15,20 @@ describe('NFA', () => {
         expect(rulebook.next_states(set(1, 2), 'a')).toEqual(set(1, 3));
 
         expect(rulebook.next_states(set(1, 3), 'b')).toEqual(set(1, 2, 4));
+    })
+
+    test('read_charactter', () => {
+        const nfa = new NFA(set(1), [4], rulebook);
+        expect(nfa.accepting()).toEqual(false);
+
+
+        nfa.read_character('b');
+        expect(nfa.accepting()).toEqual(false);
+
+        nfa.read_character('a');
+        expect(nfa.accepting()).toEqual(false);
+
+        nfa.read_character('b');
+        expect(nfa.accepting()).toEqual(true);
     })
 })
