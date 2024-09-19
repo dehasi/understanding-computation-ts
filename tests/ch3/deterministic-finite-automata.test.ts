@@ -1,4 +1,6 @@
-import { DFA, DFADesugn as DFADesign, DFARulebook, FARule } from "../../src/ch3/deterministic-finite-automata"
+import { FARule } from "../../src/ch3/common"
+
+import { DFA, DFADesign, DFARulebook } from "../../src/ch3/deterministic-finite-automata"
 
 describe('DFA', () => {
     const rulebook = new DFARulebook([
