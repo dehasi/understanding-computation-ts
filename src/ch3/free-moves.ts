@@ -1,4 +1,6 @@
-import { FARule, state, character, required, intersection } from "./common";
+import { state, FARule, character, required, intersection, is_subset, union } from "./common";
+
+export const NIL = '';
 
 export class NFARulebook {
     private rules: ReadonlyArray<FARule>
@@ -7,6 +9,15 @@ export class NFARulebook {
         this.rules = rules;
     }
 
+    follow_free_moves(states: Set<state>): Set<state> {
+        const more_states = this.next_states(states, NIL);
+        if (is_subset(more_states, states)) {
+            return states
+        } else {
+            return union(states, more_states);
+        }
+    }
+    
     next_states(states: Set<state>, character: character): Set<state> {
         return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }

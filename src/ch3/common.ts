@@ -16,6 +16,14 @@ export const intersection = <T>(s1: Set<T>, s2: Set<T>): Set<T> => {
     return new Set([...s1].filter(x => s2.has(x)));
 }
 
+export const union = <T>(s1: Set<T>, s2: Set<T>): Set<T> => {
+    return new Set([...s1, ...s2]);
+}
+
+export const is_subset = <T>(subset: Set<T>, superset: Set<T>): boolean => {
+    return [...subset].every(x => superset.has(x));
+}
+
 export type state = number;
 export type character = string
 // 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' |
@@ -28,7 +36,7 @@ export class FARule {
     next_state: state;
 
     constructor(state: state, character: character, next_state: state) {
-        assert(character.length === 1, `expected only one char, but found ${character}`);
+        assert(character.length < 2, `expected only 0 or 1 length, but found: ${character.length} for character: ${character}`);
         this.state = state;
         this.character = character;
         this.next_state = next_state;
