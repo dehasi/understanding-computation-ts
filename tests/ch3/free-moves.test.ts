@@ -13,8 +13,13 @@ describe('Free Moves', () => {
         new FARule(5, 'a', 6),
         new FARule(6, 'a', 4),
     ])
+
     test('rulebook', () => {
         expect(rulebook.next_states(set(1), NIL)).toEqual(set(2, 4));
+    })
+
+    test('follow_free_moves', () => {
+        expect(rulebook.follow_free_moves(set(1))).toEqual(set(1, 2, 4));
     })
 
 })
