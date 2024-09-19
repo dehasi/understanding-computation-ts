@@ -31,11 +31,11 @@ export class FARule {
     }
 
     applies_to(state: state, character: character): boolean {
-        return this.state === state && this.character == character
+        return this.state === state && this.character === character
     }
 
     follow(): state {
-        return this.state;
+        return this.next_state;
     }
 
     toString(): string {
