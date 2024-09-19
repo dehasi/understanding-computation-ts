@@ -77,13 +77,13 @@ export class DFA {
         return this.accept_states.includes(this.current_state);
     }
 
-    read_charactter(character: character): void {
+    read_character(character: character): void {
         this.current_state = this.rulebook.next_state(this.current_state, character);
     }
 
     read_string(string: string): void {
         for (const ch of string) {
-            this.read_charactter(ch)
+            this.read_character(ch)
         }
     }
 }
