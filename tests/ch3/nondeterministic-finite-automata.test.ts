@@ -1,5 +1,5 @@
 import { FARule } from "../../src/ch3/common"
-import { NFA, NFARulebook } from "../../src/ch3/nondeterministic-finite-automata"
+import { NFA, NFADesign, NFARulebook } from "../../src/ch3/nondeterministic-finite-automata"
 import { set } from "./test-utils"
 
 describe('NFA', () => {
@@ -30,5 +30,19 @@ describe('NFA', () => {
 
         nfa.read_character('b');
         expect(nfa.accepting()).toEqual(true);
+    })
+
+    test('read_string', () => {
+        const nfa = new NFA(set(1), [4], rulebook);
+        expect(nfa.accepting()).toEqual(false);
+
+        nfa.read_string('bbbbb');
+        expect(nfa.accepting()).toEqual(true);
+    })
+
+    test('NFADesign', () => {
+        const nfa_design = new NFADesign(set(1), [4], rulebook);
+
+        expect(nfa_design.accepts('bab')).toEqual(true);
     })
 })
