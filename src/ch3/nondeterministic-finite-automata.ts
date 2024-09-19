@@ -1,4 +1,4 @@
-import { FARule, state, character, required } from "./common";
+import { FARule, state, character, required, intersection } from "./common";
 
 export class NFARulebook {
     private rules: ReadonlyArray<FARule>
@@ -24,22 +24,22 @@ export class NFARulebook {
 }
 
 export class NFA {
-    current_state: state;
+    current_states: Set<state>;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
 
-    constructor(current_state: state, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
-        this.current_state = current_state;
+    constructor(current_state: Set<state>, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
+        this.current_states = current_state;
         this.accept_states = accept_states;
         this.rulebook = rulebook;
     }
 
     accepting(): boolean {
-        return this.accept_states.includes(this.current_state);
+        return intersection(this.current_states, new Set(this.accept_states)).size > 0;
     }
 
     read_character(character: character): void {
-        // this.current_state = this.rulebook.next_states(this.current_states, character);
+        this.current_states = this.rulebook.next_states(this.current_states, character);
     }
 
     read_string(string: string): void {
@@ -50,22 +50,22 @@ export class NFA {
 }
 
 export class NFADesign {
-    start_state: state;
+    start_states: Set<state>;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
 
-    constructor(start_state: state, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
-        this.start_state = start_state;
+    constructor(start_states: Set<state>, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
+        this.start_states = start_states;
         this.accept_states = accept_states;
         this.rulebook = rulebook;
     }
 
-    to_dfa(): NFA {
-        return new NFA(this.start_state, this.accept_states, this.rulebook);
+    to_nfa(): NFA {
+        return new NFA(this.start_states, this.accept_states, this.rulebook);
     }
 
     accepts(string: string): boolean {
-        const dfa = this.to_dfa();
+        const dfa = this.to_nfa();
         dfa.read_string(string)
         return dfa.accepting();
     }

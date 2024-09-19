@@ -12,6 +12,10 @@ export function required<T>(value: T | undefined, message?: string): T {
     return value;
 }
 
+export const intersection = <T>(s1: Set<T>, s2: Set<T>): Set<T> => {
+    return new Set([...s1].filter(x => s2.has(x)));
+}
+
 export type state = number;
 export type character = string
 // 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' |
