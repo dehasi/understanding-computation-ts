@@ -1,0 +1,5 @@
+= Chapter 3
+
+In "Free Moves" chapter, I added a method to `NFA` called `_current_states` as I don't have `Struct` in TS.
+
+Also insetad of using `null` for free moves, I used an empty string.

@@ -9,18 +9,19 @@ export class NFARulebook {
         this.rules = rules;
     }
 
+    next_states(states: Set<state>, character: character): Set<state> {
+        return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
+    }
+    
     follow_free_moves(states: Set<state>): Set<state> {
         const more_states = this.next_states(states, NIL);
         if (is_subset(more_states, states)) {
             return states
         } else {
-            return union(states, more_states);
+            return this.follow_free_moves(union(states, more_states));
         }
     }
-    
-    next_states(states: Set<state>, character: character): Set<state> {
-        return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
-    }
+
 
     follow_rules_for(state: state, character: character): ReadonlyArray<state> {
         return this.rules_for(state, character).map(x => x.follow())
@@ -46,11 +47,15 @@ export class NFA {
     }
 
     accepting(): boolean {
-        return intersection(this.current_states, new Set(this.accept_states)).size > 0;
+        return intersection(this._current_states(), new Set(this.accept_states)).size > 0;
+    }
+
+    _current_states() :Set<state> {
+        return this.rulebook.follow_free_moves(this.current_states)
     }
 
     read_character(character: character): void {
-        this.current_states = this.rulebook.next_states(this.current_states, character);
+        this.current_states = this.rulebook.next_states(this._current_states(), character);
     }
 
     read_string(string: string): void {

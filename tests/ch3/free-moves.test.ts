@@ -1,5 +1,5 @@
 import { FARule } from "../../src/ch3/common"
-import { NFA, NFADesign, NFARulebook, NIL } from "../../src/ch3/free-moves"
+import { NFADesign, NFARulebook, NIL } from "../../src/ch3/free-moves"
 
 import { set } from "./test-utils"
 
@@ -20,6 +20,15 @@ describe('Free Moves', () => {
 
     test('follow_free_moves', () => {
         expect(rulebook.follow_free_moves(set(1))).toEqual(set(1, 2, 4));
+    })
+
+    test('NFADesign', () => {
+        const nfa_design = new NFADesign(set(1), [2, 4], rulebook);
+
+        expect(nfa_design.accepts('aa')).toEqual(true);
+        expect(nfa_design.accepts('aaa')).toEqual(true);
+        expect(nfa_design.accepts('aaaaa')).toEqual(false);
+        expect(nfa_design.accepts('aaaaaa')).toEqual(true);
     })
 
 })
