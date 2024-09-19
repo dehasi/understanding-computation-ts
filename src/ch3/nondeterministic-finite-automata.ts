@@ -1,4 +1,4 @@
-import { FARule, state, character, required } from "./common.ts";
+import { FARule, state, character, required } from "./common";
 
 export class NFARulebook {
     private rules: ReadonlyArray<FARule>
@@ -7,8 +7,8 @@ export class NFARulebook {
         this.rules = rules;
     }
 
-    next_states(states: ReadonlyArray<state>, character: character): Set<state> {
-        return new Set(states.flatMap(state => this.follow_rules_for(state, character)));
+    next_states(states: Set<state>, character: character): Set<state> {
+        return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }
 
     follow_rules_for(state: state, character: character): ReadonlyArray<state> {
@@ -16,14 +16,14 @@ export class NFARulebook {
     }
 
     rules_for(state: state, character: character): ReadonlyArray<FARule> {
-        return requred(
+        return required(
             this.rules.filter(rule => rule.applies_to(state, character)),
             `FARule not found for (${state}, ${character})`
         );
     }
 }
 
-export class DFA {
+export class NFA {
     current_state: state;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
@@ -39,7 +39,7 @@ export class DFA {
     }
 
     read_character(character: character): void {
-        this.current_state = this.rulebook.next_state(this.current_state, character);
+        // this.current_state = this.rulebook.next_states(this.current_states, character);
     }
 
     read_string(string: string): void {
@@ -49,7 +49,7 @@ export class DFA {
     }
 }
 
-export class DFADesugn {
+export class NFADesign {
     start_state: state;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
@@ -60,8 +60,8 @@ export class DFADesugn {
         this.rulebook = rulebook;
     }
 
-    to_dfa(): DFA {
-        return new DFA(this.start_state, this.accept_states, this.rulebook);
+    to_dfa(): NFA {
+        return new NFA(this.start_state, this.accept_states, this.rulebook);
     }
 
     accepts(string: string): boolean {
