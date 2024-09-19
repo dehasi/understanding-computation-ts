@@ -87,3 +87,25 @@ export class DFA {
         }
     }
 }
+
+export class DFADesugn {
+    start_state: state;
+    accept_states: ReadonlyArray<state>;
+    rulebook: DFARulebook;
+
+    constructor(start_state: state, accept_states: ReadonlyArray<state>, rulebook: DFARulebook) {
+        this.start_state = start_state;
+        this.accept_states = accept_states;
+        this.rulebook = rulebook;
+    }
+
+    to_dfa(): DFA {
+        return new DFA(this.start_state, this.accept_states, this.rulebook);
+    }
+
+    accepts(string: string): boolean {
+        const dfa = this.to_dfa();
+        dfa.read_string(string)
+        return dfa.accepting();
+    }
+}
