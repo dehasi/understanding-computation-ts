@@ -44,5 +44,7 @@ describe('NFA', () => {
         const nfa_design = new NFADesign(set(1), [4], rulebook);
 
         expect(nfa_design.accepts('bab')).toEqual(true);
+        expect(nfa_design.accepts('bbbbb')).toEqual(true);
+        expect(nfa_design.accepts('bbabb')).toEqual(false);
     })
 })
