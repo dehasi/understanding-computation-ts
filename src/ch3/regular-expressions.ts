@@ -115,6 +115,11 @@ export class NFADesign {
     }
 }
 
+let x = 0;
+const new_state = (): state => {
+    x = x + 1;
+    return x;
+}
 
 export class Pattern {
     to_nfa_design(): NFADesign {
@@ -198,8 +203,33 @@ export class Concatenate extends Pattern {
     }
 }
 
-let x = 0;
-const new_state = (): state => {
-    x = x + 1;
-    return x;
+export class Choose extends Pattern {
+    private first: Pattern;
+    private second: Pattern;
+    constructor(first: Pattern, second: Pattern) {
+        super();
+        this.first = first;
+        this.second = second;
+    }
+
+    to_nfa_design(): NFADesign {
+        const first_nfa_design = this.first.to_nfa_design();
+        const second_nfa_design = this.second.to_nfa_design();
+
+
+        const start_state = new_state()
+        const accept_states = [...first_nfa_design.accept_states, ...second_nfa_design.accept_states]
+        const rules = [...first_nfa_design.rulebook.rules, ...second_nfa_design.rulebook.rules]
+
+        const extra_rules = [first_nfa_design, second_nfa_design].map(nfa_design => {
+            return new FARule(start_state, NIL, nfa_design.start_state)
+        })
+        const rulebook = new NFARulebook([...rules, ...extra_rules]);
+
+        return new NFADesign(start_state, accept_states, rulebook);
+    }
+
+    toString(): string {
+        return this.first.toStirng() + "|" + this.second.toStirng();
+    }
 }

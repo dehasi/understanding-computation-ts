@@ -1,4 +1,4 @@
-import { Concatenate, Empty, Literal } from "../../src/ch3/regular-expressions"
+import { Choose, Concatenate, Empty, Literal } from "../../src/ch3/regular-expressions"
 
 describe('Regular Expressions', () => {
 
@@ -27,9 +27,21 @@ describe('Regular Expressions', () => {
         const pattern = new Concatenate(
             new Literal('a'), new Literal('b')
         );
-        
+
         expect(pattern.matches('a')).toEqual(false);
         expect(pattern.matches('ab')).toEqual(true);
+        expect(pattern.matches('abc')).toEqual(false);
+    })
+
+    test('Choose', () => {
+        const pattern = new Choose(
+            new Literal('a'), new Literal('b')
+        );
+
+        expect(pattern.matches('a')).toEqual(true);
+        expect(pattern.matches('b')).toEqual(true);
+        expect(pattern.matches('c')).toEqual(false);
+        expect(pattern.matches('ab')).toEqual(false);
         expect(pattern.matches('abc')).toEqual(false);
     })
 })
