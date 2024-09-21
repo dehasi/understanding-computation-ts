@@ -250,9 +250,9 @@ export class Repeat extends Pattern {
         const rules = pattern_nfa_design.rulebook.rules;
 
         const extra_rules = pattern_nfa_design.accept_states.map(accept_state => {
-            return new FARule(accept_state, NIL, start_state)
+            return new FARule(accept_state, NIL, pattern_nfa_design.start_state)
         })
-            .concat(new FARule(start_state, NIL, start_state));
+            .concat(new FARule(start_state, NIL, pattern_nfa_design.start_state));
 
         const rulebook = new NFARulebook([...rules, ...extra_rules]);
 
