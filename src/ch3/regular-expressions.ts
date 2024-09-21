@@ -104,6 +104,10 @@ export class Pattern {
     to_nfa_design(): NFADesign {
         throw new Error(`to_nfa_design is not implemented for ${this.constructor.name}`);
     }
+
+    matches(string:string): boolean {
+        return this.to_nfa_design().accepts(string);
+    }
 }
 
 export class Empty extends Pattern {

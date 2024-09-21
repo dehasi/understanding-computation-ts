@@ -16,4 +16,9 @@ describe('Regular Expressions', () => {
         expect(nfa_design.accepts('a')).toEqual(true);
         expect(nfa_design.accepts('b')).toEqual(false);
     })
+
+    test('Pattern', () => {
+        expect(new Empty().matches('a')).toEqual(false);
+        expect(new Literal('a').matches('a')).toEqual(true);
+    })
 })
