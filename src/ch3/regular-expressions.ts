@@ -101,9 +101,35 @@ export class NFADesign {
 
 
 export class Pattern {
-
+    to_nfa_design(): NFADesign {
+        throw new Error(`to_nfa_design is not implemented for ${this.constructor.name}`);
+    }
 }
 
 export class Empty extends Pattern {
+    to_nfa_design(): NFADesign {
+        const start_state = new Object();
+        const accept_states = [start_state];
+        const rulebook = new NFARulebook([]);
 
+        return new NFADesign(new Set([start_state]), accept_states, rulebook);
+    }
+}
+
+export class Literal extends Pattern {
+    character: character;
+
+    constructor(character: character) {
+        super();
+        this.character = character
+
+    }
+    to_nfa_design(): NFADesign {
+        const start_state = new Object();
+        const accept_state = new Object();
+        const rule = new FARule(start_state, this.character, accept_state);
+        const rulebook = new NFARulebook([rule]);
+
+        return new NFADesign(new Set([start_state]), [accept_state], rulebook);
+    }
 }
