@@ -40,7 +40,7 @@ export class NFARulebook {
     next_states(states: Set<state>, character: character): Set<state> {
         return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }
-    
+
     follow_free_moves(states: Set<state>): Set<state> {
         const more_states = this.next_states(states, NIL);
         if (is_subset(more_states, states)) {
@@ -78,7 +78,7 @@ export class NFA {
         return intersection(this._current_states(), new Set(this.accept_states)).size > 0;
     }
 
-    _current_states() :Set<state> {
+    _current_states(): Set<state> {
         return this.rulebook.follow_free_moves(this.current_states)
     }
 
@@ -94,18 +94,18 @@ export class NFA {
 }
 
 export class NFADesign {
-    start_states: Set<state>;
+    start_state: state;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
 
-    constructor(start_states: Set<state>, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
-        this.start_states = start_states;
+    constructor(start_state: state, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
+        this.start_state = start_state;
         this.accept_states = accept_states;
         this.rulebook = rulebook;
     }
 
     to_nfa(): NFA {
-        return new NFA(this.start_states, this.accept_states, this.rulebook);
+        return new NFA(new Set([this.start_state]), this.accept_states, this.rulebook);
     }
 
     accepts(string: string): boolean {
@@ -124,15 +124,23 @@ export class Pattern {
     matches(string: string): boolean {
         return this.to_nfa_design().accepts(string);
     }
+
+    toStirng(): string {
+        throw new Error("Method not implemented.");
+    }
 }
 
 export class Empty extends Pattern {
     to_nfa_design(): NFADesign {
-        const start_state = new Object();
+        const start_state = new_state();
         const accept_states = [start_state];
         const rulebook = new NFARulebook([]);
 
-        return new NFADesign(new Set([start_state]), accept_states, rulebook);
+        return new NFADesign(start_state, accept_states, rulebook);
+    }
+
+    toString(): string {
+        return ''
     }
 }
 
@@ -145,12 +153,16 @@ export class Literal extends Pattern {
 
     }
     to_nfa_design(): NFADesign {
-        const start_state = new Object();
-        const accept_state = new Object();
+        const start_state = new_state();
+        const accept_state = new_state();
         const rule = new FARule(start_state, this.character, accept_state);
         const rulebook = new NFARulebook([rule]);
 
-        return new NFADesign(new Set([start_state]), [accept_state], rulebook);
+        return new NFADesign(start_state, [accept_state], rulebook);
+    }
+
+    toString(): string {
+        return this.character
     }
 }
 
@@ -168,16 +180,26 @@ export class Concatenate extends Pattern {
         const second_nfa_design = this.second.to_nfa_design();
 
 
-        const start_states = first_nfa_design.start_states
+        const start_state = first_nfa_design.start_state
         const accept_states = second_nfa_design.accept_states;
         const rules = [...first_nfa_design.rulebook.rules, ...second_nfa_design.rulebook.rules]
         // Translate first nfa accept states to free moves
         //
         const extra_rules = first_nfa_design.accept_states.map(state => {
-           return new FARule(state, NIL, second_nfa_design.start_states);
+            return new FARule(state, NIL, second_nfa_design.start_state);
         })
         const rulebook = new NFARulebook([...rules, ...extra_rules]);
 
-        return new NFADesign(start_states, accept_states, rulebook);
+        return new NFADesign(start_state, accept_states, rulebook);
     }
+
+    toString(): string {
+        return this.first.toStirng() + this.second.toStirng();
+    }
+}
+
+let x = 0;
+const new_state = (): state => {
+    x = x + 1;
+    return x;
 }

@@ -27,9 +27,9 @@ describe('Regular Expressions', () => {
         const pattern = new Concatenate(
             new Literal('a'), new Literal('b')
         );
+        
         expect(pattern.matches('a')).toEqual(false);
         expect(pattern.matches('ab')).toEqual(true);
         expect(pattern.matches('abc')).toEqual(false);
-
     })
 })

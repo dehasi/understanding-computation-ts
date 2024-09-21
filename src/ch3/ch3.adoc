@@ -3,3 +3,6 @@
 In "Free Moves" chapter, I added a method to `NFA` called `_current_states` as I don't have `Struct` in TS.
 
 Also insetad of using `null` for free moves, I used an empty string.
+
+In "Regular Expressions" instead of creating states as `new Object()`, 
+I used funtions `new_state()` that returns incremented numbers. It helps in debugging.
