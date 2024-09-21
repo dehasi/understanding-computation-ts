@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "jest",
-    "parser": "peggy -o lib/ch2/parser.js --format commonjs src/ch2/parser/parser.peggy"
+    "parser": "peggy -o lib/ch2/parser.js --format commonjs src/ch2/parser/parser.peggy -c src/ch2/parser/ast-classes.js"
   },
   "keywords": [],
   "author": "dehasi.me",

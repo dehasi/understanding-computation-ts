@@ -1,4 +1,5 @@
-import { parse } from "../../../lib/ch2/parser"; // Import the generated parser
+// run "npm run parser" if necessary
+import { parse } from "../../../lib/ch2/parser"; 
 
 describe("Peggy", () => {
   test("first", () => {
