@@ -122,6 +122,7 @@ const new_state = (): state => {
 }
 
 export class Pattern {
+
     to_nfa_design(): NFADesign {
         throw new Error(`to_nfa_design is not implemented for ${this.constructor.name}`);
     }
@@ -130,8 +131,19 @@ export class Pattern {
         return this.to_nfa_design().accepts(string);
     }
 
-    toStirng(): string {
-        throw new Error("Method not implemented.");
+    precedence(): number {
+        throw new Error(`precendence is not implemented for ${this.constructor.name}`);
+    }
+
+    bracket(outer_precedence: number): string {
+        if (this.precedence() < outer_precedence) {
+            return `(${this.toString()})`
+        } else {
+            return this.toString()
+        }
+    }
+    toString(): string {
+        throw new Error(`toStirng is not implemented for ${this.constructor.name}`);
     }
 }
 
@@ -142,6 +154,10 @@ export class Empty extends Pattern {
         const rulebook = new NFARulebook([]);
 
         return new NFADesign(start_state, accept_states, rulebook);
+    }
+
+    precedence(): number {
+        return 3;
     }
 
     toString(): string {
@@ -164,6 +180,10 @@ export class Literal extends Pattern {
         const rulebook = new NFARulebook([rule]);
 
         return new NFADesign(start_state, [accept_state], rulebook);
+    }
+
+    precedence(): number {
+        return 3;
     }
 
     toString(): string {
@@ -198,8 +218,12 @@ export class Concatenate extends Pattern {
         return new NFADesign(start_state, accept_states, rulebook);
     }
 
+    precedence(): number {
+        return 1;
+    }
+
     toString(): string {
-        return this.first.toStirng() + this.second.toStirng();
+        return this.first.bracket(this.precedence()) + this.second.bracket(this.precedence());
     }
 }
 
@@ -229,8 +253,12 @@ export class Choose extends Pattern {
         return new NFADesign(start_state, accept_states, rulebook);
     }
 
+    precedence(): number {
+        return 0;
+    }
+
     toString(): string {
-        return this.first.toStirng() + "|" + this.second.toStirng();
+        return this.first.bracket(this.precedence()) + "|" + this.second.bracket(this.precedence());
     }
 }
 
@@ -259,7 +287,11 @@ export class Repeat extends Pattern {
         return new NFADesign(start_state, accept_states, rulebook);
     }
 
+    precedence(): number {
+        return 2;
+    }
+
     toString(): string {
-        return this.pattern.toStirng() + "*";
+        return this.pattern.bracket(this.precedence()) + "*";
     }
 }

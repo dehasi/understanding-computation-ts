@@ -58,4 +58,20 @@ describe('Regular Expressions', () => {
         expect(pattern.matches('ab')).toEqual(false);
         expect(pattern.matches('abc')).toEqual(false);
     })
+
+    test('Repeat: Concatenate', () => {
+        const pattern = new Repeat(
+            new Concatenate(new Literal('a'),
+                new Choose(new Empty(), new Literal('b')))
+        );
+
+        expect(pattern.toString()).toEqual('(a(|b))*')
+        expect(pattern.matches('')).toEqual(true);
+        expect(pattern.matches('a')).toEqual(true);
+        expect(pattern.matches('ab')).toEqual(true);
+        expect(pattern.matches('aba')).toEqual(true);
+        expect(pattern.matches('abab')).toEqual(true);
+        expect(pattern.matches('abaab')).toEqual(true);
+        expect(pattern.matches('abba')).toEqual(false);
+    })
 })
