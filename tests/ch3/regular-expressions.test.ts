@@ -1,4 +1,4 @@
-import { Choose, Concatenate, Empty, Literal } from "../../src/ch3/regular-expressions"
+import { Choose, Concatenate, Empty, Literal, Repeat } from "../../src/ch3/regular-expressions"
 
 describe('Regular Expressions', () => {
 
@@ -41,6 +41,20 @@ describe('Regular Expressions', () => {
         expect(pattern.matches('a')).toEqual(true);
         expect(pattern.matches('b')).toEqual(true);
         expect(pattern.matches('c')).toEqual(false);
+        expect(pattern.matches('ab')).toEqual(false);
+        expect(pattern.matches('abc')).toEqual(false);
+    })
+
+    test('Repeat', () => {
+        const pattern = new Repeat(
+            new Literal('a')
+        );
+
+        expect(pattern.matches('')).toEqual(true);
+        expect(pattern.matches('a')).toEqual(true);
+        expect(pattern.matches('aa')).toEqual(true);
+        expect(pattern.matches('aaa')).toEqual(true);
+        expect(pattern.matches('b')).toEqual(false);
         expect(pattern.matches('ab')).toEqual(false);
         expect(pattern.matches('abc')).toEqual(false);
     })

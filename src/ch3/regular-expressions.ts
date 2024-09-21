@@ -189,7 +189,7 @@ export class Concatenate extends Pattern {
         const accept_states = second_nfa_design.accept_states;
         const rules = [...first_nfa_design.rulebook.rules, ...second_nfa_design.rulebook.rules]
         // Translate first nfa accept states to free moves
-        //
+
         const extra_rules = first_nfa_design.accept_states.map(state => {
             return new FARule(state, NIL, second_nfa_design.start_state);
         })
@@ -231,5 +231,35 @@ export class Choose extends Pattern {
 
     toString(): string {
         return this.first.toStirng() + "|" + this.second.toStirng();
+    }
+}
+
+export class Repeat extends Pattern {
+    private pattern: Pattern;
+    constructor(first: Pattern) {
+        super();
+        this.pattern = first;
+    }
+
+    to_nfa_design(): NFADesign {
+        const pattern_nfa_design = this.pattern.to_nfa_design();
+
+
+        const start_state = new_state()
+        const accept_states = [...pattern_nfa_design.accept_states, start_state]
+        const rules = pattern_nfa_design.rulebook.rules;
+
+        const extra_rules = pattern_nfa_design.accept_states.map(accept_state => {
+            return new FARule(accept_state, NIL, start_state)
+        })
+            .concat(new FARule(start_state, NIL, start_state));
+
+        const rulebook = new NFARulebook([...rules, ...extra_rules]);
+
+        return new NFADesign(start_state, accept_states, rulebook);
+    }
+
+    toString(): string {
+        return this.pattern.toStirng() + "*";
     }
 }
