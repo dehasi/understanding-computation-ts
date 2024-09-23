@@ -27,15 +27,15 @@ empty
     }
 
 repeat 
-  = brackets '*' {
-        return new Repeat(brackets);
+  = b:brackets '*' {
+        return new Repeat(b);
     } 
   / brackets
 
 
 brackets
-  = "(" choose ")" {
-        return choose;
+  = "(" c:choose ")" {
+        return c;
   }
   / literal
 
