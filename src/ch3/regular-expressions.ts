@@ -295,3 +295,7 @@ export class Repeat extends Pattern {
         return this.pattern.bracket(this.precedence()) + "*";
     }
 }
+
+module.exports = {
+    Choose, Empty, Literal, Concatenate, Repeat
+}
