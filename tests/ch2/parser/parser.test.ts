@@ -1,4 +1,4 @@
-// run "npm run parser" if necessary
+// run "npm run parser-ch2" if necessary
 import { parse } from "../../../lib/ch2/parser"; 
 
 describe("Peggy", () => {
