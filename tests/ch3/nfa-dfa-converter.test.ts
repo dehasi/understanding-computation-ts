@@ -12,12 +12,19 @@ describe('Converter', () => {
     ])
 
 
-    test('NFADesign', () => {
+    test('NFADesign: to_nfa', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
 
         expect(nfa_design.to_nfa()._current_states()).toEqual(set(1, 2));
         expect(nfa_design.to_nfa(set(2))._current_states()).toEqual(set( 2));
-        expect(nfa_design.to_nfa(set(3))._current_states()).toEqual(set(3,2));
+        expect(nfa_design.to_nfa(set(3))._current_states()).toEqual(set(2,3));
+    })
+
+
+    test('NFA: to_nfa', () => {
+        const nfa_design = new NFADesign(1, [3], rulebook);
+        const nfa = nfa_design.to_nfa(set(2,3))
+        expect(nfa._current_states()).toEqual(set(1,2,3));
     })
 
 })
