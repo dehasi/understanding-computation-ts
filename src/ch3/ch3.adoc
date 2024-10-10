@@ -41,3 +41,6 @@ added 21 packages, and audited 322 packages in 2s
 37 packages are looking for funding
   run `npm fund` for details
 ----
+
+For "NFASimulation" I rewrote `FARule` to accept any object to be able to put a `Set` as a state.
+ 
