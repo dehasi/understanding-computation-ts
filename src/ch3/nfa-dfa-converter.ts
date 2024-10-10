@@ -12,7 +12,7 @@ export class NFARulebook {
     next_states(states: Set<state>, character: character): Set<state> {
         return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }
-    
+
     follow_free_moves(states: Set<state>): Set<state> {
         const more_states = this.next_states(states, NIL);
         if (is_subset(more_states, states)) {
@@ -33,10 +33,14 @@ export class NFARulebook {
             `FARule not found for (${state}, ${character})`
         );
     }
+
+    alphabet(): ReadonlyArray<string> {
+        return 'abcdefghijklmnopqrstuvwxyz'.split('');
+    }
 }
 
 export class NFA {
-    current_states: Set<state>;
+    private current_states: Set<state>;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
 
@@ -50,7 +54,7 @@ export class NFA {
         return intersection(this._current_states(), new Set(this.accept_states)).size > 0;
     }
 
-    _current_states() :Set<state> {
+    _current_states(): Set<state> {
         return this.rulebook.follow_free_moves(this.current_states)
     }
 
@@ -66,18 +70,18 @@ export class NFA {
 }
 
 export class NFADesign {
-    start_states: Set<state>;
+    start_state: state;
     accept_states: ReadonlyArray<state>;
     rulebook: NFARulebook;
 
-    constructor(start_states: Set<state>, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
-        this.start_states = start_states;
+    constructor(start_state: state, accept_states: ReadonlyArray<state>, rulebook: NFARulebook) {
+        this.start_state = start_state;
         this.accept_states = accept_states;
         this.rulebook = rulebook;
     }
 
-    to_nfa(): NFA {
-        return new NFA(this.start_states, this.accept_states, this.rulebook);
+    to_nfa(current_states = new Set([this.start_state])): NFA {
+        return new NFA(current_states, this.accept_states, this.rulebook);
     }
 
     accepts(string: string): boolean {
