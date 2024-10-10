@@ -1,6 +1,46 @@
-import { state, FARule, character, required, intersection, is_subset, union } from "./common";
+import { required, intersection, is_subset, union, assert } from "./common";
 
 export const NIL = '';
+
+export type state = any;
+export type character = string
+// 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' |
+// 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' |
+// 'w' | 'x' | 'y' | 'z';
+
+export class FARule {
+    state: state;
+    character: character;
+    next_state: state;
+
+    constructor(state: state, character: character, next_state: state) {
+        assert(character.length < 2, `expected only 0 or 1 length, but found: ${character.length} for character: ${character}`);
+        this.state = state;
+        this.character = character;
+        this.next_state = next_state;
+    }
+
+    applies_to(state: state, character: character): boolean {
+        return this.state === state && this.character === character
+    }
+
+    follow(): state {
+        return this.next_state;
+    }
+
+    toString(): string {
+        return `#<FARule ${this.pretty(this.state)} --${this.character}--> ${this.pretty(this.next_state)}>`;
+    }
+    private pretty(state: any): string {
+        if (state instanceof Set) {
+            return `{${[...state].join(', ')}}`;
+        } else if (Array.isArray(state)) {
+            return `[${state.join(', ')}]`;
+        } else {
+            return `state`;
+        }
+    }
+}
 
 export class NFARulebook {
     private rules: ReadonlyArray<FARule>
@@ -23,7 +63,7 @@ export class NFARulebook {
     }
 
 
-    follow_rules_for(state: state, character: character): ReadonlyArray<state> {
+    follow_rules_for(state: state, character: character): Array<Set<state>> {
         return this.rules_for(state, character).map(x => x.follow())
     }
 
@@ -34,8 +74,8 @@ export class NFARulebook {
         );
     }
 
-    alphabet(): ReadonlyArray<string> {
-        return 'abcdefghijklmnopqrstuvwxyz'.split('');
+    alphabet(): ReadonlySet<character> {
+        return new Set(this.rules.map(rule => rule.character))
     }
 }
 
@@ -98,9 +138,14 @@ export class NFASimulation {
         this.nfa_design = nfa_design;
     }
 
-    next_state(state: Set<state>, character: character): ReadonlySet<state> {
+    next_state(state: Set<state>, character: character): Set<state> {
         const nfa = this.nfa_design.to_nfa(state);
         nfa.read_character(character);
         return nfa._current_states()
+    }
+
+    rules_for(state: Set<state>): Set<FARule> {
+        return new Set([...this.nfa_design.rulebook.alphabet()].map(characheter => new FARule(state, characheter, this.next_state(state, characheter))))
+
     }
 }

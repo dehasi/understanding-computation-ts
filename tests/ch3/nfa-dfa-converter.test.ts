@@ -1,5 +1,4 @@
-import { FARule } from "../../src/ch3/common"
-import { NFADesign, NFARulebook, NIL, NFASimulation } from "../../src/ch3/nfa-dfa-converter"
+import { FARule, NFADesign, NFARulebook, NIL, NFASimulation } from "../../src/ch3/nfa-dfa-converter"
 
 import { set } from "./test-utils"
 
@@ -11,6 +10,9 @@ describe('Converter', () => {
         new FARule(3, 'b', 1), new FARule(3, NIL, 2),
     ])
 
+    test('rulebook', () => {
+        expect(rulebook.alphabet()).toEqual(set(NIL, 'a', 'b'));
+    })
 
     test('NFADesign: to_nfa', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
@@ -28,7 +30,7 @@ describe('Converter', () => {
         expect(nfa._current_states()).toEqual(set(1, 2, 3));
     })
 
-    test('NFASimulation', () => {
+    test('NFASimulation: next_state', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
         const simulation = new NFASimulation(nfa_design);
 
@@ -37,5 +39,20 @@ describe('Converter', () => {
         expect(simulation.next_state(set(3, 2), 'b')).toEqual(set(3, 2, 1));
         expect(simulation.next_state(set(1, 3, 2), 'b')).toEqual(set(3, 2, 1));
         expect(simulation.next_state(set(1, 3, 2), 'a')).toEqual(set(1, 2));
+    })
+
+    test('NFASimulation: rulebook', () => {
+        const nfa_design = new NFADesign(1, [3], rulebook);
+        const simulation = new NFASimulation(nfa_design);
+
+        expect([...simulation.rules_for(set(1, 2))].map(rule => rule.toString())).toEqual([
+            "#<FARule {1, 2} --a--> {1, 2}>",
+            "#<FARule {1, 2} ----> {2}>",
+            "#<FARule {1, 2} --b--> {3, 2}>"])
+
+        expect([...simulation.rules_for(set(3, 2))].map(rule => rule.toString())).toEqual([
+            "#<FARule {3, 2} --a--> {}>",
+            "#<FARule {3, 2} ----> {2}>",
+            "#<FARule {3, 2} --b--> {1, 3, 2}>"])
     })
 })
