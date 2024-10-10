@@ -16,15 +16,16 @@ describe('Converter', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
 
         expect(nfa_design.to_nfa()._current_states()).toEqual(set(1, 2));
-        expect(nfa_design.to_nfa(set(2))._current_states()).toEqual(set( 2));
-        expect(nfa_design.to_nfa(set(3))._current_states()).toEqual(set(2,3));
+        expect(nfa_design.to_nfa(set(2))._current_states()).toEqual(set(2));
+        expect(nfa_design.to_nfa(set(3))._current_states()).toEqual(set(2, 3));
     })
 
 
-    test('NFA: to_nfa', () => {
+    test('NFA: read_character -> _current_states', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
-        const nfa = nfa_design.to_nfa(set(2,3))
-        expect(nfa._current_states()).toEqual(set(1,2,3));
+        const nfa = nfa_design.to_nfa(set(2, 3))
+        nfa.read_character('b')
+        expect(nfa._current_states()).toEqual(set(1, 2, 3));
     })
 
 })
