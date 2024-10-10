@@ -90,3 +90,17 @@ export class NFADesign {
         return dfa.accepting();
     }
 }
+
+export class NFASimulation {
+    private nfa_design: NFADesign
+
+    constructor(nfa_design: NFADesign) {
+        this.nfa_design = nfa_design;
+    }
+
+    next_state(state: Set<state>, character: character): ReadonlySet<state> {
+        const nfa = this.nfa_design.to_nfa(state);
+        nfa.read_character(character);
+        return nfa._current_states()
+    }
+}

@@ -1,5 +1,5 @@
 import { FARule } from "../../src/ch3/common"
-import { NFADesign, NFARulebook, NIL } from "../../src/ch3/nfa-dfa-converter"
+import { NFADesign, NFARulebook, NIL, NFASimulation } from "../../src/ch3/nfa-dfa-converter"
 
 import { set } from "./test-utils"
 
@@ -28,4 +28,14 @@ describe('Converter', () => {
         expect(nfa._current_states()).toEqual(set(1, 2, 3));
     })
 
+    test('NFASimulation', () => {
+        const nfa_design = new NFADesign(1, [3], rulebook);
+        const simulation = new NFASimulation(nfa_design);
+
+        expect(simulation.next_state(set(1, 2), 'a')).toEqual(set(1, 2));
+        expect(simulation.next_state(set(1, 2), 'b')).toEqual(set(3, 2));
+        expect(simulation.next_state(set(3, 2), 'b')).toEqual(set(3, 2, 1));
+        expect(simulation.next_state(set(1, 3, 2), 'b')).toEqual(set(3, 2, 1));
+        expect(simulation.next_state(set(1, 3, 2), 'a')).toEqual(set(1, 2));
+    })
 })
