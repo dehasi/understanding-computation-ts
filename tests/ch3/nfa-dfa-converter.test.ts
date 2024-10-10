@@ -15,7 +15,9 @@ describe('Converter', () => {
     test('NFADesign', () => {
         const nfa_design = new NFADesign(1, [3], rulebook);
 
-        expect(nfa_design.to_nfa()._current_states()).toContain(set(1, 2));
+        expect(nfa_design.to_nfa()._current_states()).toEqual(set(1, 2));
+        expect(nfa_design.to_nfa(set(2))._current_states()).toEqual(set( 2));
+        expect(nfa_design.to_nfa(set(3))._current_states()).toEqual(set(3,2));
     })
 
 })
