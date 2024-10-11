@@ -24,6 +24,7 @@ describe('Converter', () => {
 
     test('NFA: read_character -> _current_states', () => {
         const nfa = nfa_design.to_nfa(set('2', '3'))
+        expect(nfa._current_states()).toEqual(set('2', '3'));
         nfa.read_character('b')
         expect(nfa._current_states()).toEqual(set('1', '2', '3'));
     })
