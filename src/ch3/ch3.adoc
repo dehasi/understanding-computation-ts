@@ -1,12 +1,17 @@
 = Chapter 3
 
+== Free Moves
+
 In "Free Moves" chapter, I added a method to `NFA` called `_current_states` as I don't have `Struct` in TS.
 
 Also insetad of using `null` for free moves, I used an empty string.
 
+== Regular Expressions
+
 In "Regular Expressions" instead of creating states as `new Object()`, 
 I used funtions `new_state()` that returns incremented numbers. It helps in debugging.
 
+== Parser
 In "Parser" I tried `ts-pegjs`
 
 ----
@@ -42,5 +47,8 @@ added 21 packages, and audited 322 packages in 2s
   run `npm fund` for details
 ----
 
-For "NFASimulation" I rewrote `FARule` to accept any object to be able to put a `Set` as a state.
+== NFASimulation
+
+For "NFASimulation"  I needed `FARule` that can contain state of states. To achive that I made state `string`.
+And "state of states" is a concatenated string: `state 1, state 2 => state {1, 2}`. See `combined` method.
  
