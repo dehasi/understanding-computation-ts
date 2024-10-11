@@ -50,6 +50,7 @@ export class NFARulebook {
     }
 
     next_states(states: Set<state>, character: character): Set<state> {
+        console.debug(states, typeof states)
         return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }
 
@@ -219,7 +220,7 @@ export class NFASimulation {
     }
 
     discover_states_and_rules(states: Set<state>): [Set<state>, Set<FARule>] {
-        const rules = [...states].flatMap(state => [...this.rules_for(state)]).flat();
+        const rules = [...states].flatMap(state => [...this.rules_for(new Set([state]))]).flat();
         const more_states = new Set(rules.map(rule => rule.follow()))
         if (is_subset(more_states, states))
             return [states, new Set(rules)]

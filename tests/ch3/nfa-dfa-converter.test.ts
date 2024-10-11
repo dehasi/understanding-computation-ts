@@ -60,10 +60,12 @@ describe('Converter', () => {
 
         const nfa_design = new NFADesign(1, [3], rulebook);
         const start_state = nfa_design.to_nfa()._current_states();
-        expect(start_state).toEqual(set(1,2));
+        expect(start_state).toEqual(set(1, 2));
 
         const simulation = new NFASimulation(nfa_design);
 
-        simulation.discover_states_and_rules(start_state)
+        const [states, rules] = simulation.discover_states_and_rules(start_state);
+        console.debug(states)
+        console.debug(rules)
     })
 })
