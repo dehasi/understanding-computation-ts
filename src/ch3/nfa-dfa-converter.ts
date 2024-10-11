@@ -2,7 +2,7 @@ import { required, intersection, is_subset, union, assert } from "./common";
 
 export const NIL = '';
 
-export type state = any;
+export type state = string;
 export type character = string
 // 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' |
 // 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' |
@@ -12,6 +12,10 @@ export class FARule {
     state: state;
     character: character;
     next_state: state;
+
+    static new(state: number, characheter: character, next_state: number): FARule {
+        return new FARule(state + '', characheter, next_state+ '');
+    }
 
     constructor(state: state, character: character, next_state: state) {
         assert(character.length < 2, `expected only 0 or 1 length, but found: ${character.length} for character: ${character}`);
@@ -24,6 +28,9 @@ export class FARule {
         return this.state === state && this.character === character
     }
 
+    private eq<T>(setA: Set<T>, setB: Set<T>): boolean {
+        return setA.size === setB.size && [...setA].every(item => setB.has(item));
+    }
     follow(): state {
         return this.next_state;
     }
@@ -50,7 +57,6 @@ export class NFARulebook {
     }
 
     next_states(states: Set<state>, character: character): Set<state> {
-        console.debug(states, typeof states)
         return new Set([...states].flatMap(state => this.follow_rules_for(state, character)));
     }
 
@@ -64,7 +70,7 @@ export class NFARulebook {
     }
 
 
-    follow_rules_for(state: state, character: character): Array<Set<state>> {
+    follow_rules_for(state: state, character: character): ReadonlyArray<state> {
         return this.rules_for(state, character).map(x => x.follow())
     }
 
@@ -215,8 +221,10 @@ export class NFASimulation {
 
     rules_for(state: Set<state>): Set<FARule> {
         return new Set([...this.nfa_design.rulebook.alphabet()].map(characheter =>
-            new FARule(state, characheter, this.next_state(state, characheter))))
-
+            new FARule(this.combined(state), characheter, this.combined(this.next_state(state, characheter)))))
+    }
+    private combined(states: Set<state>): string {
+        return '{' + [...states].sort().join(',') + '}';
     }
 
     discover_states_and_rules(states: Set<state>): [Set<state>, Set<FARule>] {
@@ -229,9 +237,9 @@ export class NFASimulation {
     }
 
     to_dfa_design(): DFADesign {
-        const start_state = this.nfa_design.to_nfa()._current_states();
-        const [states, rules] = this.discover_states_and_rules(start_state);
-        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(state).accepting());
+        const start_state = this.combined(this.nfa_design.to_nfa()._current_states());
+        const [states, rules] = this.discover_states_and_rules(new Set([start_state]));
+        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(new Set ([state])).accepting());
 
         return new DFADesign(start_state, accept_states, new DFARulebook([...rules]))
     }
