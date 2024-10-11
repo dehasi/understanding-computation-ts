@@ -55,4 +55,15 @@ describe('Converter', () => {
             "#<FARule {3, 2} ----> {2}>",
             "#<FARule {3, 2} --b--> {1, 3, 2}>"])
     })
+
+    test('NFASimulation: discover', () => {
+
+        const nfa_design = new NFADesign(1, [3], rulebook);
+        const start_state = nfa_design.to_nfa()._current_states();
+        expect(start_state).toEqual(set(1,2));
+
+        const simulation = new NFASimulation(nfa_design);
+
+        simulation.discover_states_and_rules(start_state)
+    })
 })
