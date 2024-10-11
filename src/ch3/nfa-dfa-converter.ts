@@ -81,7 +81,8 @@ export class NFARulebook {
     }
 
     alphabet(): ReadonlySet<character> {
-        return new Set(this.rules.map(rule => rule.character))
+        // As TS dosen't have 'compact' method, we return NIL "manually"
+        return new Set(this.rules.map(rule => rule.character).filter(character => character !== NIL))
     }
 }
 

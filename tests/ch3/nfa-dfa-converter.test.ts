@@ -12,7 +12,7 @@ describe('Converter', () => {
     const nfa_design = new NFADesign('1', ['3'], rulebook);
 
     test('rulebook', () => {
-        expect(rulebook.alphabet()).toEqual(set(NIL, 'a', 'b'));
+        expect(rulebook.alphabet()).toEqual(set( 'a', 'b'));
     })
 
     test('NFADesign: to_nfa', () => {
@@ -44,12 +44,10 @@ describe('Converter', () => {
 
         expect([...simulation.rules_for(set('1', '2'))].map(rule => rule.toString())).toEqual([
             "#<FARule {1, 2} --a--> {1, 2}>",
-            "#<FARule {1, 2} --none--> {2}>", // FIX: no such rule in the book
             "#<FARule {1, 2} --b--> {2, 3}>"])
 
         expect([...simulation.rules_for(set('3', '2'))].map(rule => rule.toString())).toEqual([
             "#<FARule {2, 3} --a--> {}>",
-            "#<FARule {2, 3} --none--> {2}>", // FIX: no such rule in the book
             "#<FARule {2, 3} --b--> {1, 2, 3}>"])
     })
 
