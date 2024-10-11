@@ -43,13 +43,13 @@ describe('Converter', () => {
 
         expect([...simulation.rules_for(set('1', '2'))].map(rule => rule.toString())).toEqual([
             "#<FARule {1, 2} --a--> {1, 2}>",
-            "#<FARule {1, 2} ----> {2}>",
-            "#<FARule {1, 2} --b--> {3, 2}>"])
+            "#<FARule {1, 2} --none--> {2}>", // FIX: no such rule in the book
+            "#<FARule {1, 2} --b--> {2, 3}>"])
 
         expect([...simulation.rules_for(set('3', '2'))].map(rule => rule.toString())).toEqual([
-            "#<FARule {3, 2} --a--> {}>",
-            "#<FARule {3, 2} ----> {2}>",
-            "#<FARule {3, 2} --b--> {1, 3, 2}>"])
+            "#<FARule {2, 3} --a--> {}>",
+            "#<FARule {2, 3} --none--> {2}>", // FIX: no such rule in the book
+            "#<FARule {2, 3} --b--> {1, 2, 3}>"])
     })
 
     test('NFASimulation: discover', () => {

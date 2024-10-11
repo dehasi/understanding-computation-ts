@@ -1,6 +1,6 @@
-import { required, intersection, is_subset, union, assert } from "./common";
+import { required, intersection, is_subset, union } from "./common";
 
-export const NIL = '';
+export const NIL = 'none';
 
 export type state = string;
 export type character = string
@@ -14,11 +14,10 @@ export class FARule {
     next_state: state;
 
     static new(state: number, characheter: character, next_state: number): FARule {
-        return new FARule(state + '', characheter, next_state+ '');
+        return new FARule(state + '', characheter, next_state + '');
     }
 
     constructor(state: state, character: character, next_state: state) {
-        assert(character.length < 2, `expected only 0 or 1 length, but found: ${character.length} for character: ${character}`);
         this.state = state;
         this.character = character;
         this.next_state = next_state;
@@ -44,7 +43,7 @@ export class FARule {
         } else if (Array.isArray(state)) {
             return `[${state.join(', ')}]`;
         } else {
-            return `state`;
+            return `${state}`;
         }
     }
 }
@@ -224,7 +223,7 @@ export class NFASimulation {
             new FARule(this.combined(state), characheter, this.combined(this.next_state(state, characheter)))))
     }
     private combined(states: Set<state>): string {
-        return '{' + [...states].sort().join(',') + '}';
+        return '{' + [...states].sort().join(', ') + '}';
     }
 
     discover_states_and_rules(states: Set<state>): [Set<state>, Set<FARule>] {
@@ -239,7 +238,7 @@ export class NFASimulation {
     to_dfa_design(): DFADesign {
         const start_state = this.combined(this.nfa_design.to_nfa()._current_states());
         const [states, rules] = this.discover_states_and_rules(new Set([start_state]));
-        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(new Set ([state])).accepting());
+        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(new Set([state])).accepting());
 
         return new DFADesign(start_state, accept_states, new DFARulebook([...rules]))
     }
