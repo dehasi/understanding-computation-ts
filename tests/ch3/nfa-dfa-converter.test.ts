@@ -68,4 +68,11 @@ describe('Converter', () => {
         console.debug(states)
         console.debug(rules)
     })
+
+    test('NFASimulation: accepting', () => {
+        const nfa_design = new NFADesign(1, [3], rulebook);
+
+        expect(nfa_design.to_nfa(set(1,2)).accepting()).toBeFalsy()
+        expect(nfa_design.to_nfa(set(2,3)).accepting()).toBeTruthy()
+    })
 })
