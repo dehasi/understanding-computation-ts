@@ -1,0 +1,54 @@
+= Chapter 3
+
+== Free Moves
+
+In "Free Moves" chapter, I added a method to `NFA` called `_current_states` as I don't have `Struct` in TS.
+
+Also insetad of using `null` for free moves, I used an empty string.
+
+== Regular Expressions
+
+In "Regular Expressions" instead of creating states as `new Object()`, 
+I used funtions `new_state()` that returns incremented numbers. It helps in debugging.
+
+== Parser
+In "Parser" I tried `ts-pegjs`
+
+----
+$ npm install ts-pegjs
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: understanding-computation-ts@1.0.0
+npm error Found: peggy@4.0.3
+npm error node_modules/peggy
+npm error   dev peggy@"^4.0.3" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer peggy@"^3.0.2" from ts-pegjs@4.2.1
+npm error node_modules/ts-pegjs
+npm error   ts-pegjs@"*" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry
+npm error this command with --force or --legacy-peer-deps
+npm error to accept an incorrect (and potentially broken) dependency resolution.
+npm error
+npm error
+npm error For a full report see:
+----
+
+
+----
+$ npm install ts-pegjs --legacy-peer-deps
+
+added 21 packages, and audited 322 packages in 2s
+
+37 packages are looking for funding
+  run `npm fund` for details
+----
+
+== NFASimulation
+
+For "NFASimulation" I needed `FARule` that can contain state of states. To achive that I made state `string`.
+And "state of states" is a concatenated string: `state 1, state 2 => state {1, 2}`. See `combined` and `uncombined` methods.
+ 

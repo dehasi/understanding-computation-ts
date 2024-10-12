@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "jest",
-    "parser": "peggy -o lib/ch2/parser.js --format commonjs src/ch2/parser/parser.peggy"
+    "parser-ch2": "peggy -o lib/ch2/parser.js --format commonjs src/ch2/parser/parser.peggy",
+    "parser-ch3": "peggy -o lib/ch3/parser.ts --format commonjs src/ch3/parser.peggy --plugin ./node_modules/ts-pegjs/dist/tspegjs "
   },
   "keywords": [],
   "author": "dehasi.me",
@@ -19,5 +20,8 @@
     "peggy": "^4.0.3",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "ts-pegjs": "^4.2.1"
   }
 }
