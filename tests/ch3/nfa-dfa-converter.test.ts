@@ -1,6 +1,6 @@
 import { FARule, NFADesign, NFARulebook, NIL, NFASimulation } from "../../src/ch3/nfa-dfa-converter"
 
-import { comb, set } from "./test-utils"
+import { set } from "./test-utils"
 
 
 describe('Converter', () => {
