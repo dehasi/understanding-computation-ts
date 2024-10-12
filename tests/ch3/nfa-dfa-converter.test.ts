@@ -1,6 +1,6 @@
 import { FARule, NFADesign, NFARulebook, NIL, NFASimulation } from "../../src/ch3/nfa-dfa-converter"
 
-import { set } from "./test-utils"
+import { comb, set } from "./test-utils"
 
 
 describe('Converter', () => {
@@ -58,15 +58,24 @@ describe('Converter', () => {
 
         const simulation = new NFASimulation(nfa_design);
 
-        const [states, rules] = simulation.discover_states_and_rules(start_state);
-        // FIX: different values in the book
+        // start_state is actualy a 'combened' state
+        // switching from set('1', '2') to set('{1, 2}'), gives the exact result as in the book
+        const [states, rules] = simulation.discover_states_and_rules(set('{1, 2}'));
         expect(states).toContain('{1, 2}')
         expect(states).toContain('{2, 3}')
         expect(states).toContain('{}')
-        expect(states).toContain('{1, 2, 3}')
+        expect(states).toContain('{1, 2, 3}');
+        expect(states).toEqual(set('{}', '{1, 2}', '{2, 3}','{1, 2, 3}'))
 
-        console.debug(states)
-        console.debug(rules)
+       const str_rules  = [...rules].map(rule => rule.toString());
+       expect(str_rules).toContain( '#<FARule {1, 2} --a--> {1, 2}>')
+       expect(str_rules).toContain( '#<FARule {1, 2} --b--> {2, 3}>')
+       expect(str_rules).toContain( '#<FARule {2, 3} --a--> {}>')
+       expect(str_rules).toContain( '#<FARule {2, 3} --b--> {1, 2, 3}>')
+       expect(str_rules).toContain( '#<FARule  --a--> {}>')
+       expect(str_rules).toContain( '#<FARule  --b--> {}>')
+       expect(str_rules).toContain( '#<FARule {1, 2, 3} --a--> {1, 2}>')
+       expect(str_rules).toContain( '#<FARule {1, 2, 3} --b--> {1, 2, 3}>')
     })
 
     test('NFASimulation: accepting', () => {

@@ -224,16 +224,28 @@ export class NFASimulation {
             new FARule(this.combined(state), characheter, this.combined(this.next_state(state, characheter)))))
     }
     private combined(states: Set<state>): string {
+      if(states.size == 1)  return [...states][0];
+
         return '{' + [...states].sort().join(', ') + '}';
     }
 
     discover_states_and_rules(states: Set<state>): [Set<state>, Set<FARule>] {
-        const rules = [...states].flatMap(state => [...this.rules_for(new Set([state]))]).flat();
+        const rules = [...states].flatMap(state => [...this.rules_for(new Set(this.uncombined(state)))]);
+        //const more_states = new Set(rules.map(rule => rule.follow()).filter(state => state !== '{}') .flatMap(state => this.uncombined(state)))
         const more_states = new Set(rules.map(rule => rule.follow()))
         if (is_subset(more_states, states))
             return [states, new Set(rules)]
         else
-            return [more_states, new Set(rules)]
+            return this.discover_states_and_rules(new Set([...states, ...more_states]))
+    }
+
+   
+    uncombined(state: string): Array<state> {
+        if(state.startsWith('{')) {
+        return    state.substring(1, state.length - 1)
+            .split(', ') 
+        }
+        else return [state];
     }
 
     to_dfa_design(): DFADesign {
