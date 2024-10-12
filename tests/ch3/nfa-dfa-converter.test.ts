@@ -97,7 +97,7 @@ describe('Converter', () => {
         const simulation = new NFASimulation(nfa_design);
 
         const dfa_design = simulation.to_dfa_design();
-
+        // FIX: fails because we don't have accepted states
         expect(dfa_design.accepts('aab')).toBeTruthy()
         expect(dfa_design.accepts('bbbabb')).toBeTruthy()
         expect(dfa_design.accepts('aaa')).toBeFalsy()
