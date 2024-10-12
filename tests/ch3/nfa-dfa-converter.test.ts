@@ -59,6 +59,11 @@ describe('Converter', () => {
 
         const [states, rules] = simulation.discover_states_and_rules(start_state);
         // FIX: different values in the book
+        expect(states).toContain('{1, 2}')
+        expect(states).toContain('{2, 3}')
+        expect(states).toContain('{}')
+        expect(states).toContain('{1, 2, 3}')
+        
         console.debug(states)
         console.debug(rules)
     })
