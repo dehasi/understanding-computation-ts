@@ -11,9 +11,6 @@ describe('Converter', () => {
     ])
     const nfa_design = new NFADesign('1', ['3'], rulebook);
 
-    test('rulebook', () => {
-        expect(rulebook.alphabet()).toEqual(set('a', 'b'));
-    })
 
     test('NFADesign: to_nfa', () => {
         expect(nfa_design.to_nfa()._current_states()).toEqual(set('1', '2'));
@@ -37,6 +34,10 @@ describe('Converter', () => {
         expect(simulation.next_state(set('3', '2'), 'b')).toEqual(set('3', '2', '1'));
         expect(simulation.next_state(set('1', '3', '2'), 'b')).toEqual(set('3', '2', '1'));
         expect(simulation.next_state(set('1', '3', '2'), 'a')).toEqual(set('1', '2'));
+    })
+
+    test('rulebook', () => {
+        expect(rulebook.alphabet()).toEqual(set('a', 'b'));
     })
 
     test('NFASimulation: rulebook', () => {
@@ -63,7 +64,7 @@ describe('Converter', () => {
         expect(states).toContain('{2, 3}')
         expect(states).toContain('{}')
         expect(states).toContain('{1, 2, 3}')
-        
+
         console.debug(states)
         console.debug(rules)
     })
