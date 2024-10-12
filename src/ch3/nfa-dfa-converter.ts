@@ -224,7 +224,7 @@ export class NFASimulation {
             new FARule(this.combined(state), characheter, this.combined(this.next_state(state, characheter)))))
     }
     private combined(states: Set<state>): string {
-      if(states.size == 1)  return [...states][0];
+        if (states.size == 1) return [...states][0];
 
         return '{' + [...states].sort().join(', ') + '}';
     }
@@ -239,11 +239,10 @@ export class NFASimulation {
             return this.discover_states_and_rules(new Set([...states, ...more_states]))
     }
 
-   
+
     uncombined(state: string): Array<state> {
-        if(state.startsWith('{')) {
-        return    state.substring(1, state.length - 1)
-            .split(', ') 
+        if (state.startsWith('{')) {
+            return state.substring(1, state.length - 1).split(', ')
         }
         else return [state];
     }
