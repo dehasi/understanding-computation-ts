@@ -250,7 +250,7 @@ export class NFASimulation {
     to_dfa_design(): DFADesign {
         const start_state = this.combined(this.nfa_design.to_nfa()._current_states());
         const [states, rules] = this.discover_states_and_rules(new Set([start_state]));
-        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(new Set([state])).accepting());
+        const accept_states = [...states].filter(state => this.nfa_design.to_nfa(new Set(this.uncombined(state))).accepting());
 
         return new DFADesign(start_state, accept_states, new DFARulebook([...rules]))
     }
