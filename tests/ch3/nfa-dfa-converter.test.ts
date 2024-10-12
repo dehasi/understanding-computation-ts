@@ -65,17 +65,27 @@ describe('Converter', () => {
         expect(states).toContain('{2, 3}')
         expect(states).toContain('{}')
         expect(states).toContain('{1, 2, 3}');
-        expect(states).toEqual(set('{}', '{1, 2}', '{2, 3}','{1, 2, 3}'))
+        expect(states).toEqual(set('{}', '{1, 2}', '{2, 3}', '{1, 2, 3}'))
 
-       const str_rules  = [...rules].map(rule => rule.toString());
-       expect(str_rules).toContain( '#<FARule {1, 2} --a--> {1, 2}>')
-       expect(str_rules).toContain( '#<FARule {1, 2} --b--> {2, 3}>')
-       expect(str_rules).toContain( '#<FARule {2, 3} --a--> {}>')
-       expect(str_rules).toContain( '#<FARule {2, 3} --b--> {1, 2, 3}>')
-       expect(str_rules).toContain( '#<FARule  --a--> {}>')
-       expect(str_rules).toContain( '#<FARule  --b--> {}>')
-       expect(str_rules).toContain( '#<FARule {1, 2, 3} --a--> {1, 2}>')
-       expect(str_rules).toContain( '#<FARule {1, 2, 3} --b--> {1, 2, 3}>')
+        const str_rules = [...rules].map(rule => rule.toString());
+        expect(str_rules).toContain('#<FARule {1, 2} --a--> {1, 2}>')
+        expect(str_rules).toContain('#<FARule {1, 2} --b--> {2, 3}>')
+        expect(str_rules).toContain('#<FARule {2, 3} --a--> {}>')
+        expect(str_rules).toContain('#<FARule {2, 3} --b--> {1, 2, 3}>')
+        expect(str_rules).toContain('#<FARule  --a--> {}>')
+        expect(str_rules).toContain('#<FARule  --b--> {}>')
+        expect(str_rules).toContain('#<FARule {1, 2, 3} --a--> {1, 2}>')
+        expect(str_rules).toContain('#<FARule {1, 2, 3} --b--> {1, 2, 3}>')
+        expect(str_rules).toEqual([
+            '#<FARule {1, 2} --a--> {1, 2}>',
+            '#<FARule {1, 2} --b--> {2, 3}>',
+            '#<FARule {2, 3} --a--> {}>',
+            '#<FARule {2, 3} --b--> {1, 2, 3}>',
+            '#<FARule  --a--> {}>',
+            '#<FARule  --b--> {}>',
+            '#<FARule {1, 2, 3} --a--> {1, 2}>',
+            '#<FARule {1, 2, 3} --b--> {1, 2, 3}>'
+        ])
     })
 
     test('NFASimulation: accepting', () => {
